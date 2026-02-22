@@ -1,26 +1,307 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Dark mode via clase .dark en <html> — activado por defecto */
+@custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+   TEMA: Tokens semánticos → variables CSS de Tailwind v4
+   ============================================================ */
 @theme inline {
+  /* Colores base */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  /* Tarjetas y popovers */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  /* Primario (Cyan neon) */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  /* Secundario */
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  /* Silenciado */
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Acento (Violet neon) */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  /* Destructivo */
+  --color-destructive: var(--destructive);
+
+  /* UI */
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Gráficas (colores neon) */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Tokens personalizados: neon y glass */
+  --color-neon-cyan: var(--neon-cyan);
+  --color-neon-violet: var(--neon-violet);
+  --color-neon-blue: var(--neon-blue);
+  --color-neon-green: var(--neon-green);
+  --color-neon-amber: var(--neon-amber);
+  --color-neon-pink: var(--neon-pink);
+  --color-glass: var(--glass);
+  --color-glass-border: var(--glass-border);
+
+  /* Radio */
+  --radius-sm:  calc(var(--radius) - 4px);
+  --radius-md:  calc(var(--radius) - 2px);
+  --radius-lg:  var(--radius);
+  --radius-xl:  calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  /* Fuentes */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Animaciones neon */
+  --animate-pulse-neon: pulse-neon 2s ease-in-out infinite;
+  --animate-fade-in:    fade-in 0.2s ease-out;
+  --animate-slide-up:   slide-up 0.3s ease-out;
+  --animate-glow:       glow 3s ease-in-out infinite;
+
+  @keyframes pulse-neon {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.7; }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px var(--neon-cyan), 0 0 20px color-mix(in oklab, var(--neon-cyan) 30%, transparent); }
+    50%       { box-shadow: 0 0 10px var(--neon-cyan), 0 0 40px color-mix(in oklab, var(--neon-cyan) 50%, transparent); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ============================================================
+   TEMA CLARO (fallback — no se usa en esta app)
+   ============================================================ */
+:root {
+  --radius: 0.625rem;
+
+  /* Fondo: usa el dark incluso en :root para que dark sea el default */
+  --background:          oklch(0.08 0.012 240);
+  --foreground:          oklch(0.94 0.006 240);
+  --card:                oklch(0.11 0.012 240);
+  --card-foreground:     oklch(0.94 0.006 240);
+  --popover:             oklch(0.13 0.012 240);
+  --popover-foreground:  oklch(0.94 0.006 240);
+  --primary:             oklch(0.73 0.19 196);      /* Cyan neon */
+  --primary-foreground:  oklch(0.08 0.012 240);
+  --secondary:           oklch(0.16 0.01 240);
+  --secondary-foreground:oklch(0.94 0.006 240);
+  --muted:               oklch(0.15 0.01 240);
+  --muted-foreground:    oklch(0.58 0.01 240);
+  --accent:              oklch(0.20 0.015 280);     /* Violet suave */
+  --accent-foreground:   oklch(0.73 0.18 285);
+  --destructive:         oklch(0.62 0.22 25);
+  --border:              oklch(1 0 0 / 8%);
+  --input:               oklch(1 0 0 / 10%);
+  --ring:                oklch(0.73 0.19 196);
+
+  /* Gráficas neon */
+  --chart-1: oklch(0.73 0.19 196);   /* cyan    */
+  --chart-2: oklch(0.67 0.22 285);   /* violet  */
+  --chart-3: oklch(0.60 0.20 255);   /* blue    */
+  --chart-4: oklch(0.70 0.19 145);   /* green   */
+  --chart-5: oklch(0.76 0.18 75);    /* amber   */
+
+  /* Sidebar */
+  --sidebar:                    oklch(0.09 0.012 240);
+  --sidebar-foreground:         oklch(0.94 0.006 240);
+  --sidebar-primary:            oklch(0.73 0.19 196);
+  --sidebar-primary-foreground: oklch(0.08 0.012 240);
+  --sidebar-accent:             oklch(0.14 0.01 240);
+  --sidebar-accent-foreground:  oklch(0.73 0.19 196);
+  --sidebar-border:             oklch(1 0 0 / 6%);
+  --sidebar-ring:               oklch(0.73 0.19 196);
+
+  /* Tokens personalizados neon */
+  --neon-cyan:   oklch(0.73 0.19 196);
+  --neon-violet: oklch(0.67 0.22 285);
+  --neon-blue:   oklch(0.60 0.20 255);
+  --neon-green:  oklch(0.70 0.19 145);
+  --neon-amber:  oklch(0.76 0.18 75);
+  --neon-pink:   oklch(0.72 0.22 340);
+
+  /* Glassmorphism */
+  --glass:        oklch(1 0 0 / 4%);
+  --glass-border: oklch(1 0 0 / 8%);
+}
+
+/* ============================================================
+   CLASE .dark — idéntica al :root para consistencia
+   (la app siempre usa dark mode)
+   ============================================================ */
+.dark {
+  --background:          oklch(0.08 0.012 240);
+  --foreground:          oklch(0.94 0.006 240);
+  --card:                oklch(0.11 0.012 240);
+  --card-foreground:     oklch(0.94 0.006 240);
+  --popover:             oklch(0.13 0.012 240);
+  --popover-foreground:  oklch(0.94 0.006 240);
+  --primary:             oklch(0.73 0.19 196);
+  --primary-foreground:  oklch(0.08 0.012 240);
+  --secondary:           oklch(0.16 0.01 240);
+  --secondary-foreground:oklch(0.94 0.006 240);
+  --muted:               oklch(0.15 0.01 240);
+  --muted-foreground:    oklch(0.58 0.01 240);
+  --accent:              oklch(0.20 0.015 280);
+  --accent-foreground:   oklch(0.73 0.18 285);
+  --destructive:         oklch(0.62 0.22 25);
+  --border:              oklch(1 0 0 / 8%);
+  --input:               oklch(1 0 0 / 10%);
+  --ring:                oklch(0.73 0.19 196);
+  --chart-1: oklch(0.73 0.19 196);
+  --chart-2: oklch(0.67 0.22 285);
+  --chart-3: oklch(0.60 0.20 255);
+  --chart-4: oklch(0.70 0.19 145);
+  --chart-5: oklch(0.76 0.18 75);
+  --sidebar:                    oklch(0.09 0.012 240);
+  --sidebar-foreground:         oklch(0.94 0.006 240);
+  --sidebar-primary:            oklch(0.73 0.19 196);
+  --sidebar-primary-foreground: oklch(0.08 0.012 240);
+  --sidebar-accent:             oklch(0.14 0.01 240);
+  --sidebar-accent-foreground:  oklch(0.73 0.19 196);
+  --sidebar-border:             oklch(1 0 0 / 6%);
+  --sidebar-ring:               oklch(0.73 0.19 196);
+  --neon-cyan:   oklch(0.73 0.19 196);
+  --neon-violet: oklch(0.67 0.22 285);
+  --neon-blue:   oklch(0.60 0.20 255);
+  --neon-green:  oklch(0.70 0.19 145);
+  --neon-amber:  oklch(0.76 0.18 75);
+  --neon-pink:   oklch(0.72 0.22 340);
+  --glass:        oklch(1 0 0 / 4%);
+  --glass-border: oklch(1 0 0 / 8%);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    /* Dark mode aplicado via clase en layout.tsx — no usar @apply dark */
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Scrollbar personalizada (WebKit) */
+  ::-webkit-scrollbar        { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track  { background: oklch(0.10 0.012 240); }
+  ::-webkit-scrollbar-thumb  { background: oklch(0.22 0.01 240); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: oklch(0.73 0.19 196 / 50%); }
+
+  /* Selección de texto */
+  ::selection {
+    background-color: oklch(0.73 0.19 196 / 25%);
+    color: oklch(0.94 0.006 240);
+  }
+}
+
+/* ============================================================
+   UTILIDADES PERSONALIZADAS
+   ============================================================ */
+@utility glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+@utility neon-glow-cyan {
+  box-shadow:
+    0 0 8px color-mix(in oklab, var(--neon-cyan) 40%, transparent),
+    0 0 24px color-mix(in oklab, var(--neon-cyan) 20%, transparent);
+}
+
+@utility neon-glow-violet {
+  box-shadow:
+    0 0 8px color-mix(in oklab, var(--neon-violet) 40%, transparent),
+    0 0 24px color-mix(in oklab, var(--neon-violet) 20%, transparent);
+}
+
+@utility neon-text-cyan {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 10px color-mix(in oklab, var(--neon-cyan) 50%, transparent);
+}
+
+@utility neon-text-violet {
+  color: var(--neon-violet);
+  text-shadow: 0 0 10px color-mix(in oklab, var(--neon-violet) 50%, transparent);
+}
+
+@utility grid-bg {
+  background-image:
+    linear-gradient(oklch(1 0 0 / 3%) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(1 0 0 / 3%) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ============================================================
+   VIEW TRANSITIONS — Navegación fluida entre páginas
+   ============================================================ */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: 100ms ease-out both fade-out-page;
+}
+
+::view-transition-new(root) {
+  animation: 150ms ease-out both fade-in-page;
+}
+
+@keyframes fade-out-page {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes fade-in-page {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0);   }
 }
