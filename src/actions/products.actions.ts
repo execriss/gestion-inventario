@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { requireOrgRole } from '@/lib/supabase/org'
 import { productSchema } from '@/lib/validations/product.schema'
 
 type ActionResult = { success: true } | { error: string }
@@ -13,16 +14,13 @@ function generateSku(): string {
 export async function createProduct(data: unknown): Promise<ActionResult> {
   try {
     const supabase = await createClient()
+    const auth = await requireOrgRole(supabase, 'operator')
+    if ('error' in auth) return auth
+
     const {
       data: { user },
     } = await supabase.auth.getUser()
-
     if (!user) return { error: 'No autenticado' }
-
-    const { data: role } = await supabase.rpc('get_user_role')
-    if (!role || !['admin', 'operator'].includes(role)) {
-      return { error: 'No tenés permisos para esta acción' }
-    }
 
     const parsed = productSchema.safeParse(data)
     if (!parsed.success) {
@@ -32,15 +30,16 @@ export async function createProduct(data: unknown): Promise<ActionResult> {
     const sku = parsed.data.sku || generateSku()
 
     const { error } = await supabase.from('products').insert({
-      name: parsed.data.name,
+      organization_id: auth.orgId,
+      name:            parsed.data.name,
       sku,
-      description: parsed.data.description || null,
-      category_id: parsed.data.category_id,
-      unit_id: parsed.data.unit_id,
-      min_stock: parsed.data.min_stock,
-      cost_price: parsed.data.cost_price ?? null,
-      sale_price: parsed.data.sale_price ?? null,
-      created_by: user.id,
+      description:     parsed.data.description || null,
+      category_id:     parsed.data.category_id,
+      unit_id:         parsed.data.unit_id,
+      min_stock:       parsed.data.min_stock,
+      cost_price:      parsed.data.cost_price ?? null,
+      sale_price:      parsed.data.sale_price ?? null,
+      created_by:      user.id,
     })
 
     if (error) {
@@ -64,16 +63,8 @@ export async function updateProduct(
 ): Promise<ActionResult> {
   try {
     const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) return { error: 'No autenticado' }
-
-    const { data: role } = await supabase.rpc('get_user_role')
-    if (!role || !['admin', 'operator'].includes(role)) {
-      return { error: 'No tenés permisos para esta acción' }
-    }
+    const auth = await requireOrgRole(supabase, 'operator')
+    if ('error' in auth) return auth
 
     const parsed = productSchema.safeParse(data)
     if (!parsed.success) {
@@ -83,14 +74,14 @@ export async function updateProduct(
     const { error } = await supabase
       .from('products')
       .update({
-        name: parsed.data.name,
-        sku: parsed.data.sku || null,
+        name:        parsed.data.name,
+        sku:         parsed.data.sku || null,
         description: parsed.data.description || null,
         category_id: parsed.data.category_id,
-        unit_id: parsed.data.unit_id,
-        min_stock: parsed.data.min_stock,
-        cost_price: parsed.data.cost_price ?? null,
-        sale_price: parsed.data.sale_price ?? null,
+        unit_id:     parsed.data.unit_id,
+        min_stock:   parsed.data.min_stock,
+        cost_price:  parsed.data.cost_price ?? null,
+        sale_price:  parsed.data.sale_price ?? null,
       })
       .eq('id', id)
 
@@ -112,16 +103,8 @@ export async function updateProduct(
 export async function deleteProduct(id: string): Promise<ActionResult> {
   try {
     const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) return { error: 'No autenticado' }
-
-    const { data: role } = await supabase.rpc('get_user_role')
-    if (role !== 'admin') {
-      return { error: 'Solo administradores pueden eliminar productos' }
-    }
+    const auth = await requireOrgRole(supabase, 'admin')
+    if ('error' in auth) return auth
 
     const { error } = await supabase
       .from('products')

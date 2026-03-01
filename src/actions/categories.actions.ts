@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { requireOrgRole } from '@/lib/supabase/org'
 import { categorySchema } from '@/lib/validations/category.schema'
 
 type ActionResult = { success: true } | { error: string }
@@ -9,16 +10,8 @@ type ActionResult = { success: true } | { error: string }
 export async function createCategory(data: unknown): Promise<ActionResult> {
   try {
     const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) return { error: 'No autenticado' }
-
-    const { data: role } = await supabase.rpc('get_user_role')
-    if (role !== 'admin') {
-      return { error: 'Solo administradores pueden gestionar categorías' }
-    }
+    const auth = await requireOrgRole(supabase, 'admin')
+    if ('error' in auth) return auth
 
     const parsed = categorySchema.safeParse(data)
     if (!parsed.success) {
@@ -26,9 +19,10 @@ export async function createCategory(data: unknown): Promise<ActionResult> {
     }
 
     const { error } = await supabase.from('categories').insert({
-      name: parsed.data.name,
-      color: parsed.data.color,
-      icon: parsed.data.icon,
+      organization_id: auth.orgId,
+      name:            parsed.data.name,
+      color:           parsed.data.color,
+      icon:            parsed.data.icon,
     })
 
     if (error) {
@@ -51,16 +45,8 @@ export async function updateCategory(
 ): Promise<ActionResult> {
   try {
     const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) return { error: 'No autenticado' }
-
-    const { data: role } = await supabase.rpc('get_user_role')
-    if (role !== 'admin') {
-      return { error: 'Solo administradores pueden gestionar categorías' }
-    }
+    const auth = await requireOrgRole(supabase, 'admin')
+    if ('error' in auth) return auth
 
     const parsed = categorySchema.safeParse(data)
     if (!parsed.success) {
@@ -70,9 +56,9 @@ export async function updateCategory(
     const { error } = await supabase
       .from('categories')
       .update({
-        name: parsed.data.name,
+        name:  parsed.data.name,
         color: parsed.data.color,
-        icon: parsed.data.icon,
+        icon:  parsed.data.icon,
       })
       .eq('id', id)
 
@@ -93,16 +79,8 @@ export async function updateCategory(
 export async function deleteCategory(id: string): Promise<ActionResult> {
   try {
     const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) return { error: 'No autenticado' }
-
-    const { data: role } = await supabase.rpc('get_user_role')
-    if (role !== 'admin') {
-      return { error: 'Solo administradores pueden gestionar categorías' }
-    }
+    const auth = await requireOrgRole(supabase, 'admin')
+    if ('error' in auth) return auth
 
     const { error } = await supabase
       .from('categories')
@@ -111,10 +89,7 @@ export async function deleteCategory(id: string): Promise<ActionResult> {
 
     if (error) {
       if (error.code === '23503') {
-        return {
-          error:
-            'No se puede eliminar: hay productos asociados a esta categoría',
-        }
+        return { error: 'No se puede eliminar: hay productos asociados a esta categoría' }
       }
       return { error: 'Error al eliminar la categoría' }
     }

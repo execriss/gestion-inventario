@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { requireOrgRole } from '@/lib/supabase/org'
 import { supplierSchema } from '@/lib/validations/supplier.schema'
 
 type ActionResult = { success: true } | { error: string }
@@ -9,16 +10,8 @@ type ActionResult = { success: true } | { error: string }
 export async function createSupplier(data: unknown): Promise<ActionResult> {
   try {
     const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) return { error: 'No autenticado' }
-
-    const { data: role } = await supabase.rpc('get_user_role')
-    if (!role || !['admin', 'operator'].includes(role)) {
-      return { error: 'No tenés permisos para esta acción' }
-    }
+    const auth = await requireOrgRole(supabase, 'operator')
+    if ('error' in auth) return auth
 
     const parsed = supplierSchema.safeParse(data)
     if (!parsed.success) {
@@ -26,12 +19,13 @@ export async function createSupplier(data: unknown): Promise<ActionResult> {
     }
 
     const { error } = await supabase.from('suppliers').insert({
-      name: parsed.data.name,
-      contact: parsed.data.contact || null,
-      email: parsed.data.email || null,
-      phone: parsed.data.phone || null,
-      address: parsed.data.address || null,
-      notes: parsed.data.notes || null,
+      organization_id: auth.orgId,
+      name:            parsed.data.name,
+      contact:         parsed.data.contact || null,
+      email:           parsed.data.email   || null,
+      phone:           parsed.data.phone   || null,
+      address:         parsed.data.address || null,
+      notes:           parsed.data.notes   || null,
     })
 
     if (error) {
@@ -51,16 +45,8 @@ export async function updateSupplier(
 ): Promise<ActionResult> {
   try {
     const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) return { error: 'No autenticado' }
-
-    const { data: role } = await supabase.rpc('get_user_role')
-    if (!role || !['admin', 'operator'].includes(role)) {
-      return { error: 'No tenés permisos para esta acción' }
-    }
+    const auth = await requireOrgRole(supabase, 'operator')
+    if ('error' in auth) return auth
 
     const parsed = supplierSchema.safeParse(data)
     if (!parsed.success) {
@@ -70,12 +56,12 @@ export async function updateSupplier(
     const { error } = await supabase
       .from('suppliers')
       .update({
-        name: parsed.data.name,
+        name:    parsed.data.name,
         contact: parsed.data.contact || null,
-        email: parsed.data.email || null,
-        phone: parsed.data.phone || null,
+        email:   parsed.data.email   || null,
+        phone:   parsed.data.phone   || null,
         address: parsed.data.address || null,
-        notes: parsed.data.notes || null,
+        notes:   parsed.data.notes   || null,
       })
       .eq('id', id)
 
@@ -93,16 +79,8 @@ export async function updateSupplier(
 export async function deleteSupplier(id: string): Promise<ActionResult> {
   try {
     const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) return { error: 'No autenticado' }
-
-    const { data: role } = await supabase.rpc('get_user_role')
-    if (role !== 'admin') {
-      return { error: 'Solo administradores pueden eliminar proveedores' }
-    }
+    const auth = await requireOrgRole(supabase, 'admin')
+    if ('error' in auth) return auth
 
     const { error } = await supabase
       .from('suppliers')
