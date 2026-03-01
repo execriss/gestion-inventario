@@ -13,6 +13,7 @@ import {
   ArrowUpFromLine,
   History,
   BarChart3,
+  Settings,
   LogOut,
   Loader2,
 } from 'lucide-react'
@@ -24,7 +25,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 
 interface UserInfo {
@@ -50,7 +50,7 @@ const NAV_ITEMS = [
     icon: Package,
   },
   {
-    label: 'Categorías',
+    label: 'Categorias',
     href: '/categories',
     icon: Tag,
   },
@@ -77,11 +77,17 @@ const NAV_ITEMS = [
     href: '/movements',
     icon: History,
   },
-  { type: 'separator' as const, label: 'Análisis' },
+  { type: 'separator' as const, label: 'Analisis' },
   {
     label: 'Reportes',
     href: '/reports',
     icon: BarChart3,
+  },
+  { type: 'separator' as const, label: 'Sistema' },
+  {
+    label: 'Configuracion',
+    href: '/settings',
+    icon: Settings,
   },
 ] as const
 
@@ -97,17 +103,38 @@ function getInitials(name: string): string {
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
   const router = useRouter()
+  const [isNavigating, startTransition] = useTransition()
 
   // Pre-fetch todas las rutas al montar el sidebar para que la primera
-  // navegación sea instantánea (también pre-compila en modo desarrollo)
+  // navegacion sea instantanea (tambien pre-compila en modo desarrollo)
   useEffect(() => {
     NAV_ITEMS.forEach(item => {
       if ('href' in item) router.prefetch(item.href)
     })
   }, [router])
 
+  function handleNavClick(
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) {
+    e.preventDefault()
+
+    // Si ya estamos en esta ruta, no hacer nada
+    if (pathname === href) return
+
+    // Cerrar el sheet mobile si existe
+    onNavigate?.()
+
+    // useTransition marca la navegacion como no-urgente, lo que permite
+    // que React muestre el loading.tsx skeleton inmediatamente sin congelar
+    // la UI del sidebar. El usuario ve feedback visual instantaneo.
+    startTransition(() => {
+      router.push(href)
+    })
+  }
+
   return (
-    <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Navegación principal">
+    <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Navegacion principal">
       {NAV_ITEMS.map((item, index) => {
         if ('type' in item && item.type === 'separator') {
           return (
@@ -122,21 +149,36 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
         if (!('href' in item)) return null
 
         const Icon = item.icon
+        // Si otro item del nav es un sub-path más específico y coincide con
+        // el pathname actual, usar match exacto para este item (evita que el
+        // padre /movements se active cuando estamos en /movements/ingreso)
+        const hasSiblingMatch = NAV_ITEMS.some(
+          (other) =>
+            'href' in other &&
+            other.href !== item.href &&
+            pathname.startsWith(other.href) &&
+            other.href.startsWith(item.href + '/')
+        )
         const isActive =
           item.href === '/dashboard'
             ? pathname === '/dashboard'
-            : pathname.startsWith(item.href)
+            : hasSiblingMatch
+              ? pathname === item.href
+              : pathname.startsWith(item.href)
 
         return (
           <Link
             key={item.href}
             href={item.href}
-            onClick={onNavigate}
+            onClick={(e) => handleNavClick(e, item.href)}
             className={cn(
               'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
               isActive
                 ? 'border-l-2 border-primary bg-sidebar-accent text-sidebar-accent-foreground neon-text-cyan'
-                : 'border-l-2 border-transparent text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground'
+                : 'border-l-2 border-transparent text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
+              // Feedback visual durante la navegacion: opacidad reducida en
+              // el item activo actual para indicar que se esta cambiando
+              isNavigating && isActive && 'opacity-60'
             )}
             aria-current={isActive ? 'page' : undefined}
           >
@@ -189,7 +231,7 @@ function SidebarFooter({ user }: { user: UserInfo }) {
               className="size-8 shrink-0 text-muted-foreground hover:text-destructive"
               onClick={handleLogout}
               disabled={isPending}
-              aria-label="Cerrar sesión"
+              aria-label="Cerrar sesion"
             >
               {isPending ? (
                 <Loader2 className="size-4 animate-spin" aria-hidden="true" />
@@ -198,7 +240,7 @@ function SidebarFooter({ user }: { user: UserInfo }) {
               )}
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="right">Cerrar sesión</TooltipContent>
+          <TooltipContent side="right">Cerrar sesion</TooltipContent>
         </Tooltip>
       </div>
     </div>

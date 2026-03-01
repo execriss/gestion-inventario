@@ -59,6 +59,10 @@ const ROUTE_LABELS: Record<string, string> = {
   '/movements/ingreso': 'Ingresos',
   '/movements/egreso': 'Egresos',
   '/reports': 'Reportes',
+  '/settings': 'Configuracion',
+  '/settings/profile': 'Perfil',
+  '/settings/organization': 'Organizacion',
+  '/settings/members': 'Equipo',
 }
 
 function getBreadcrumbs(pathname: string): { label: string; href: string }[] {
