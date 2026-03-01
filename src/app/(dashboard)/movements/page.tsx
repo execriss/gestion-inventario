@@ -1,9 +1,12 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import {
   ArrowDownToLine,
   ArrowUpFromLine,
   ChevronLeft,
   ChevronRight,
+  Download,
+  FileText,
   History,
 } from 'lucide-react'
 
@@ -11,63 +14,148 @@ import { createClient } from '@/lib/supabase/server'
 import type { MovementWithRelations } from '@/types/database.types'
 import { Button } from '@/components/ui/button'
 import { MovementTable } from '@/components/movements/movement-table'
-import { DEMO_MODE, DEMO_RECENT_MOVEMENTS } from '@/lib/demo'
+import { MovementFilters } from '@/components/movements/movement-filters'
+import {
+  DEMO_MODE,
+  DEMO_RECENT_MOVEMENTS,
+  DEMO_PRODUCTS,
+  DEMO_SUPPLIERS,
+} from '@/lib/demo'
 
 const PAGE_SIZE = 20
+
+interface SearchParams {
+  page?: string
+  type?: string
+  product_id?: string
+  supplier_id?: string
+  date_from?: string
+  date_to?: string
+}
 
 export default async function MovementsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; type?: string }>
+  searchParams: Promise<SearchParams>
 }) {
-  const { page: pageParam, type: typeFilter } = await searchParams
+  const {
+    page: pageParam,
+    type: typeFilter,
+    product_id: productIdFilter,
+    supplier_id: supplierIdFilter,
+    date_from: dateFromFilter,
+    date_to: dateToFilter,
+  } = await searchParams
   const page = Number(pageParam) || 0
 
   let movements: MovementWithRelations[]
   let total: number
+  let productsList: { id: string; name: string }[] = []
+  let suppliersList: { id: string; name: string }[] = []
 
   if (DEMO_MODE) {
-    const filtered =
-      typeFilter === 'ingreso' || typeFilter === 'egreso'
-        ? DEMO_RECENT_MOVEMENTS.filter(m => m.type === typeFilter)
-        : DEMO_RECENT_MOVEMENTS
+    // Filter demo movements in memory
+    let filtered = [...DEMO_RECENT_MOVEMENTS]
+
+    if (typeFilter === 'ingreso' || typeFilter === 'egreso') {
+      filtered = filtered.filter((m) => m.type === typeFilter)
+    }
+
+    if (dateFromFilter) {
+      const from = new Date(dateFromFilter + 'T00:00:00')
+      filtered = filtered.filter((m) => new Date(m.created_at) >= from)
+    }
+
+    if (dateToFilter) {
+      const to = new Date(dateToFilter + 'T23:59:59')
+      filtered = filtered.filter((m) => new Date(m.created_at) <= to)
+    }
+
     movements = filtered as unknown as MovementWithRelations[]
     total = filtered.length
+
+    productsList = DEMO_PRODUCTS.map((p) => ({ id: p.id, name: p.name }))
+    suppliersList = DEMO_SUPPLIERS.map((s) => ({ id: s.id, name: s.name }))
   } else {
     const supabase = await createClient()
 
-    let query = supabase
-      .from('inventory_movements')
-      .select(
-        '*, products(name, sku), suppliers(name), profiles(full_name)',
-        { count: 'exact' }
-      )
-      .order('created_at', { ascending: false })
-      .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
+    // Fetch movements, products, and suppliers in parallel
+    const [movementsResult, productsResult, suppliersResult] =
+      await Promise.all([
+        (() => {
+          let query = supabase
+            .from('inventory_movements')
+            .select(
+              '*, products(name, sku), suppliers(name), profiles(full_name)',
+              { count: 'exact' }
+            )
+            .order('created_at', { ascending: false })
+            .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
 
-    if (typeFilter === 'ingreso' || typeFilter === 'egreso') {
-      query = query.eq('type', typeFilter)
-    }
+          if (typeFilter === 'ingreso' || typeFilter === 'egreso') {
+            query = query.eq('type', typeFilter)
+          }
 
-    const { data, count } = await query
-    movements = (data ?? []) as unknown as MovementWithRelations[]
-    total = count ?? 0
+          if (productIdFilter) {
+            query = query.eq('product_id', productIdFilter)
+          }
+
+          if (supplierIdFilter) {
+            query = query.eq('supplier_id', supplierIdFilter)
+          }
+
+          if (dateFromFilter) {
+            query = query.gte('created_at', dateFromFilter + 'T00:00:00')
+          }
+
+          if (dateToFilter) {
+            query = query.lte('created_at', dateToFilter + 'T23:59:59')
+          }
+
+          return query
+        })(),
+        supabase
+          .from('products')
+          .select('id, name')
+          .eq('is_active', true)
+          .order('name'),
+        supabase
+          .from('suppliers')
+          .select('id, name')
+          .eq('is_active', true)
+          .order('name'),
+      ])
+
+    movements = (movementsResult.data ?? []) as unknown as MovementWithRelations[]
+    total = movementsResult.count ?? 0
+    productsList = productsResult.data ?? []
+    suppliersList = suppliersResult.data ?? []
   }
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
-  function filterHref(filter?: string) {
-    const params = new URLSearchParams()
-    if (filter) params.set('type', filter)
-    const qs = params.toString()
-    return `/movements${qs ? `?${qs}` : ''}`
+  // Build export URL with active filters
+  const exportParams = new URLSearchParams()
+  if (typeFilter === 'ingreso' || typeFilter === 'egreso') {
+    exportParams.set('type', typeFilter)
   }
+  if (productIdFilter) exportParams.set('product_id', productIdFilter)
+  if (supplierIdFilter) exportParams.set('supplier_id', supplierIdFilter)
+  if (dateFromFilter) exportParams.set('date_from', dateFromFilter)
+  if (dateToFilter) exportParams.set('date_to', dateToFilter)
+  const exportQs = exportParams.toString()
+  const csvExportHref = `/api/export/movements${exportQs ? `?${exportQs}` : ''}`
+  const pdfExportHref = `/api/export/report?tab=movements${exportQs ? `&${exportQs}` : ''}`
 
   function paginationHref(targetPage: number) {
     const params = new URLSearchParams()
     if (typeFilter === 'ingreso' || typeFilter === 'egreso') {
       params.set('type', typeFilter)
     }
+    if (productIdFilter) params.set('product_id', productIdFilter)
+    if (supplierIdFilter) params.set('supplier_id', supplierIdFilter)
+    if (dateFromFilter) params.set('date_from', dateFromFilter)
+    if (dateToFilter) params.set('date_to', dateToFilter)
     if (targetPage > 0) params.set('page', String(targetPage))
     const qs = params.toString()
     return `/movements${qs ? `?${qs}` : ''}`
@@ -91,7 +179,19 @@ export default async function MovementsPage({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button asChild variant="outline" size="sm">
+            <a href={csvExportHref} download>
+              <Download className="size-4" />
+              CSV
+            </a>
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <a href={pdfExportHref} download>
+              <FileText className="size-4" />
+              PDF
+            </a>
+          </Button>
           <Button asChild variant="default" className="bg-emerald-600 hover:bg-emerald-500">
             <Link href="/movements/ingreso">
               <ArrowDownToLine className="size-4" />
@@ -107,45 +207,13 @@ export default async function MovementsPage({
         </div>
       </div>
 
-      {/* Filter tabs */}
-      <div className="flex items-center gap-2">
-        <Link href={filterHref()}>
-          <Button
-            variant={!typeFilter ? 'default' : 'outline'}
-            size="sm"
-          >
-            Todos
-          </Button>
-        </Link>
-        <Link href={filterHref('ingreso')}>
-          <Button
-            variant={typeFilter === 'ingreso' ? 'default' : 'outline'}
-            size="sm"
-            className={
-              typeFilter === 'ingreso'
-                ? 'bg-emerald-600 hover:bg-emerald-500'
-                : ''
-            }
-          >
-            <ArrowDownToLine className="size-3.5" />
-            Ingresos
-          </Button>
-        </Link>
-        <Link href={filterHref('egreso')}>
-          <Button
-            variant={typeFilter === 'egreso' ? 'default' : 'outline'}
-            size="sm"
-            className={
-              typeFilter === 'egreso'
-                ? 'bg-destructive hover:bg-destructive/90'
-                : ''
-            }
-          >
-            <ArrowUpFromLine className="size-3.5" />
-            Egresos
-          </Button>
-        </Link>
-      </div>
+      {/* Filters */}
+      <Suspense fallback={null}>
+        <MovementFilters
+          products={productsList}
+          suppliers={suppliersList}
+        />
+      </Suspense>
 
       {/* Table */}
       <MovementTable movements={movements} />
