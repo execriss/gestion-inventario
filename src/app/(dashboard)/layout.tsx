@@ -29,7 +29,7 @@ export default async function DashboardLayout({
   if (DEMO_MODE) {
     return (
       <div className="flex min-h-svh">
-        <Sidebar user={DEMO_USER} />
+        <Sidebar user={DEMO_USER} lowStockCount={DEMO_LOW_STOCK.length} />
         <div className="flex flex-1 flex-col lg:pl-64">
           <Header user={DEMO_USER} lowStockCount={DEMO_LOW_STOCK.length} />
           <main className="flex-1 p-4 lg:p-6">{children}</main>
@@ -57,7 +57,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-svh">
-      <Sidebar user={userInfo} />
+      <Sidebar user={userInfo} lowStockCount={lowStockCount} />
       <div className="flex flex-1 flex-col lg:pl-64">
         <Header user={userInfo} lowStockCount={lowStockCount} />
         <main className="flex-1 p-4 lg:p-6">{children}</main>

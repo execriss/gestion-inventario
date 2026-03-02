@@ -13,6 +13,7 @@ import {
   ArrowUpFromLine,
   History,
   BarChart3,
+  BellRing,
   Settings,
   LogOut,
   Loader2,
@@ -36,6 +37,7 @@ interface UserInfo {
 
 interface SidebarProps {
   user: UserInfo
+  lowStockCount?: number
 }
 
 const NAV_ITEMS = [
@@ -79,6 +81,12 @@ const NAV_ITEMS = [
   },
   { type: 'separator' as const, label: 'Analisis' },
   {
+    label: 'Alertas',
+    href: '/alerts',
+    icon: BellRing,
+    color: 'text-amber-400',
+  },
+  {
     label: 'Reportes',
     href: '/reports',
     icon: BarChart3,
@@ -100,7 +108,7 @@ function getInitials(name: string): string {
     .slice(0, 2)
 }
 
-function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
+function SidebarNav({ onNavigate, lowStockCount = 0 }: { onNavigate?: () => void; lowStockCount?: number }) {
   const pathname = usePathname()
   const router = useRouter()
   const [isNavigating, startTransition] = useTransition()
@@ -189,7 +197,12 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               )}
               aria-hidden="true"
             />
-            <span>{item.label}</span>
+            <span className="flex-1">{item.label}</span>
+            {item.href === '/alerts' && lowStockCount > 0 && (
+              <span className="flex size-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+                {lowStockCount > 99 ? '99+' : lowStockCount}
+              </span>
+            )}
           </Link>
         )
       })}
@@ -247,7 +260,7 @@ function SidebarFooter({ user }: { user: UserInfo }) {
   )
 }
 
-export function Sidebar({ user }: SidebarProps) {
+export function Sidebar({ user, lowStockCount }: SidebarProps) {
   return (
     <>
       {/* Desktop sidebar */}
@@ -263,7 +276,7 @@ export function Sidebar({ user }: SidebarProps) {
           </span>
         </div>
 
-        <SidebarNav />
+        <SidebarNav lowStockCount={lowStockCount} />
         <SidebarFooter user={user} />
       </aside>
     </>

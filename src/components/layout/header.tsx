@@ -58,6 +58,7 @@ const ROUTE_LABELS: Record<string, string> = {
   '/movements': 'Historial',
   '/movements/ingreso': 'Ingresos',
   '/movements/egreso': 'Egresos',
+  '/alerts': 'Alertas',
   '/reports': 'Reportes',
   '/settings': 'Configuracion',
   '/settings/profile': 'Perfil',
@@ -187,7 +188,7 @@ export function Header({ user, lowStockCount }: HeaderProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="/products?filter=low-stock"
+                href="/alerts"
                 className={cn(
                   'relative inline-flex items-center rounded-lg p-2',
                   'text-muted-foreground transition-colors hover:text-foreground'
@@ -269,7 +270,7 @@ export function Header({ user, lowStockCount }: HeaderProps) {
             </span>
           </div>
 
-          <SidebarNav onNavigate={() => setMobileOpen(false)} />
+          <SidebarNav onNavigate={() => setMobileOpen(false)} lowStockCount={lowStockCount} />
           <SidebarFooter user={user} />
         </SheetContent>
       </Sheet>
