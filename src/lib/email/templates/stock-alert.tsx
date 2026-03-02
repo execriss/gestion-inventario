@@ -39,7 +39,7 @@ export function StockAlertEmail({
           <Heading style={heading}>Alerta de stock bajo</Heading>
           <Text style={paragraph}>
             Se detectaron <strong>{products.length}</strong> producto(s) con
-            stock por debajo del minimo en <strong>{orgName}</strong>.
+            stock por debajo del mínimo en <strong>{orgName}</strong>.
           </Text>
 
           <Hr style={hr} />
@@ -92,9 +92,9 @@ export function StockAlertEmail({
 
           {/* Footer */}
           <Text style={footer}>
-            Este email fue enviado automaticamente por Inventario Pro para{' '}
+            Este email fue enviado automáticamente por Inventario Pro para{' '}
             <strong>{orgName}</strong>. Podes desactivar estas notificaciones
-            desde la configuracion de tu organizacion.
+            desde la configuración de tu organización.
           </Text>
         </Container>
       </Body>

@@ -222,7 +222,7 @@ export default async function MovementsPage({
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Pagina {page + 1} de {totalPages}
+            Página {page + 1} de {totalPages}
           </p>
           <div className="flex items-center gap-2">
             {page > 0 ? (

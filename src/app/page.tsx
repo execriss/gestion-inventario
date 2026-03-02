@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import {
   Box,
@@ -21,43 +22,62 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { LandingNavbar } from '@/components/landing/navbar'
 
+export const metadata: Metadata = {
+  title: 'Inventario Pro — Sistema de gestión de inventario',
+  description: 'Controlá tu stock con precisión. Sistema SaaS multi-empresa con alertas de stock, reportes y exportación. Gratis para empezar.',
+  openGraph: {
+    title: 'Inventario Pro — Sistema de gestión de inventario',
+    description: 'Controlá tu stock con precisión. Sistema SaaS multi-empresa con alertas de stock, reportes y exportación.',
+    type: 'website',
+    locale: 'es_AR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Inventario Pro',
+    description: 'Controlá tu stock con precisión. Sistema SaaS multi-empresa.',
+  },
+  alternates: {
+    canonical: '/',
+  },
+}
+
 /* ================================================================
    FEATURES DATA
    ================================================================ */
 const FEATURES = [
   {
     icon: Package,
-    title: 'Gestion de Productos',
+    title: 'Gestión de Productos',
     description:
-      'SKU, precios de compra y venta, categorias y unidades de medida. Todo organizado y accesible.',
+      'SKU, precios de compra y venta, categorías y unidades de medida. Todo organizado y accesible.',
   },
   {
     icons: [ArrowDownToLine, ArrowUpFromLine],
     title: 'Movimientos de Stock',
     description:
-      'Registra ingresos y egresos con auditoria completa. Cada movimiento queda trazado con fecha, usuario y motivo.',
+      'Registra ingresos y egresos con auditoría completa. Cada movimiento queda trazado con fecha, usuario y motivo.',
   },
   {
     icon: BarChart3,
     title: 'Reportes Avanzados',
     description:
-      'Analisis de los ultimos 30 dias con graficas interactivas. Visualiza tendencias y toma mejores decisiones.',
+      'Análisis de los últimos 30 días con gráficas interactivas. Visualiza tendencias y toma mejores decisiones.',
   },
   {
     icon: Users,
     title: 'Multi-empresa',
     description:
-      'Cada organizacion tiene su espacio aislado con roles de acceso. Administra multiples negocios desde una cuenta.',
+      'Cada organización tiene su espacio aislado con roles de acceso. Administra multiples negocios desde una cuenta.',
   },
   {
     icon: Bell,
     title: 'Alertas de Stock',
     description:
-      'Notificaciones automaticas cuando el stock baja del minimo configurado. Nunca te quedes sin mercaderia.',
+      'Notificaciones automáticas cuando el stock baja del mínimo configurado. Nunca te quedes sin mercadería.',
   },
   {
     icon: Download,
-    title: 'Exportacion',
+    title: 'Exportación',
     description:
       'Descarga tus datos en CSV o PDF cuando quieras. Reportes listos para compartir o archivar.',
   },
@@ -69,14 +89,14 @@ const STEPS = [
     number: '01',
     title: 'Registra tu empresa',
     description:
-      'Crea tu cuenta y configura tu organizacion en minutos. Sin tarjeta de credito.',
+      'Crea tu cuenta y configura tu organización en minutos. Sin tarjeta de crédito.',
   },
   {
     icon: Package,
     number: '02',
     title: 'Carga tus productos',
     description:
-      'Defini categorias, unidades y productos con sus precios de compra y venta.',
+      'Definí categorías, unidades y productos con sus precios de compra y venta.',
   },
   {
     icon: TrendingUp,
@@ -89,9 +109,9 @@ const STEPS = [
 
 const FREE_FEATURES = [
   'Hasta 100 productos',
-  '1 organizacion',
+  '1 organización',
   '3 usuarios',
-  'Exportacion CSV',
+  'Exportación CSV',
   'Alertas basicas',
 ]
 
@@ -99,7 +119,7 @@ const PRO_FEATURES = [
   'Productos ilimitados',
   'Multiples organizaciones',
   'Usuarios ilimitados',
-  'Exportacion CSV + PDF',
+  'Exportación CSV + PDF',
   'Reportes avanzados',
   'Email notifications',
   'Soporte prioritario',
@@ -132,13 +152,13 @@ export default function LandingPage() {
             className="mb-6 border-primary/30 bg-primary/5 px-4 py-1.5 text-xs font-medium tracking-wide text-primary"
           >
             <Sparkles className="size-3" aria-hidden="true" />
-            Sistema de gestion multi-empresa
+            Sistema de gestión multi-empresa
           </Badge>
 
           {/* Headline */}
           <h1 className="mx-auto max-w-3xl text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
             Controla tu inventario{' '}
-            <span className="neon-text-cyan">con precision</span>
+            <span className="neon-text-cyan">con precisión</span>
           </h1>
 
           {/* Subtitle */}
@@ -336,7 +356,7 @@ export default function LandingPage() {
                   <span className="text-sm text-muted-foreground">/ mes</span>
                 </div>
                 <p className="mt-3 text-sm text-muted-foreground">
-                  Para negocios que estan empezando a organizar su inventario.
+                  Para negocios que están empezando a organizar su inventario.
                 </p>
               </div>
 
@@ -365,7 +385,7 @@ export default function LandingPage() {
             <div className="glass-card neon-glow-cyan relative flex flex-col rounded-2xl border-primary/30 p-8">
               {/* Popular badge */}
               <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-1 text-xs font-semibold text-white">
-                Mas popular
+                Más popular
               </Badge>
 
               <div className="mb-6">
@@ -427,7 +447,7 @@ export default function LandingPage() {
             Listo para tomar el control de tu inventario?
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Unite a los negocios que ya gestionan su stock de forma
+            Únete a los negocios que ya gestionan su stock de forma
             inteligente.
           </p>
 
@@ -460,7 +480,7 @@ export default function LandingPage() {
               </span>
             </div>
             <p className="text-xs text-muted-foreground">
-              Gestion de inventario simple, potente y en tiempo real.
+              Gestión de inventario simple, potente y en tiempo real.
             </p>
           </div>
 
@@ -470,7 +490,7 @@ export default function LandingPage() {
               href="#caracteristicas"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              Caracteristicas
+              Características
             </a>
             <a
               href="#precios"

@@ -60,9 +60,9 @@ const ROUTE_LABELS: Record<string, string> = {
   '/movements/egreso': 'Egresos',
   '/alerts': 'Alertas',
   '/reports': 'Reportes',
-  '/settings': 'Configuracion',
+  '/settings': 'Configuración',
   '/settings/profile': 'Perfil',
-  '/settings/organization': 'Organizacion',
+  '/settings/organization': 'Organización',
   '/settings/members': 'Equipo',
 }
 

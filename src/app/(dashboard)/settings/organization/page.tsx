@@ -13,7 +13,7 @@ export default async function OrganizationPage() {
     return (
       <div className="glass-card rounded-xl p-6 text-center">
         <p className="text-muted-foreground">
-          No se pudo cargar la organizacion. Verifica que tengas permisos.
+          No se pudo cargar la organización. Verifica que tengas permisos.
         </p>
       </div>
     )

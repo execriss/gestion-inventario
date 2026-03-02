@@ -28,12 +28,12 @@ export default function OnboardingPage() {
 
         {/* Title */}
         <h1 className="mb-2 text-xl font-bold text-foreground">
-          Tu cuenta no esta asociada a ningun negocio
+          Tu cuenta no está asociada a ningún negocio
         </h1>
 
         {/* Description */}
         <p className="mb-8 text-sm text-muted-foreground">
-          Esto puede pasar si tu link de invitacion fue revocado. Contacta al
+          Esto puede pasar si tu link de invitación fue revocado. Contacta al
           administrador de tu equipo o crea un nuevo negocio.
         </p>
 
@@ -63,7 +63,7 @@ export default function OnboardingPage() {
             ) : (
               <LogOut className="mr-2 size-4" aria-hidden="true" />
             )}
-            Cerrar sesion
+            Cerrar sesión
           </Button>
         </div>
       </div>

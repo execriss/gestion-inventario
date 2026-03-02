@@ -29,8 +29,8 @@ import { cn } from '@/lib/utils'
 
 const registerSchema = z.object({
   full_name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
-  email: z.string().email('Email invalido'),
-  password: z.string().min(8, 'Minimo 8 caracteres'),
+  email: z.string().email('Email inválido'),
+  password: z.string().min(8, 'Mínimo 8 caracteres'),
   org_name: z
     .string()
     .min(2, 'El nombre del negocio debe tener al menos 2 caracteres'),
@@ -169,7 +169,7 @@ export default function RegisterPage() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Contrasena</FormLabel>
+                <FormLabel>Contraseña</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Lock
@@ -178,7 +178,7 @@ export default function RegisterPage() {
                     />
                     <Input
                       type="password"
-                      placeholder="Minimo 8 caracteres"
+                      placeholder="Mínimo 8 caracteres"
                       className="pl-10"
                       autoComplete="new-password"
                       disabled={isPending}
@@ -239,12 +239,12 @@ export default function RegisterPage() {
 
       {/* Link a login */}
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Ya tenes cuenta?{' '}
+        ¿Ya tenés cuenta?{' '}
         <Link
           href="/login"
           className="font-medium text-primary transition-colors hover:text-primary/80"
         >
-          Iniciar sesion
+          Iniciar sesión
         </Link>
       </p>
     </div>

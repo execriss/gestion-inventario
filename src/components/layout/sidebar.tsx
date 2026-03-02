@@ -52,7 +52,7 @@ const NAV_ITEMS = [
     icon: Package,
   },
   {
-    label: 'Categorias',
+    label: 'Categorías',
     href: '/categories',
     icon: Tag,
   },
@@ -79,7 +79,7 @@ const NAV_ITEMS = [
     href: '/movements',
     icon: History,
   },
-  { type: 'separator' as const, label: 'Analisis' },
+  { type: 'separator' as const, label: 'Análisis' },
   {
     label: 'Alertas',
     href: '/alerts',
@@ -93,7 +93,7 @@ const NAV_ITEMS = [
   },
   { type: 'separator' as const, label: 'Sistema' },
   {
-    label: 'Configuracion',
+    label: 'Configuración',
     href: '/settings',
     icon: Settings,
   },
@@ -244,7 +244,7 @@ function SidebarFooter({ user }: { user: UserInfo }) {
               className="size-8 shrink-0 text-muted-foreground hover:text-destructive"
               onClick={handleLogout}
               disabled={isPending}
-              aria-label="Cerrar sesion"
+              aria-label="Cerrar sesión"
             >
               {isPending ? (
                 <Loader2 className="size-4 animate-spin" aria-hidden="true" />
@@ -253,7 +253,7 @@ function SidebarFooter({ user }: { user: UserInfo }) {
               )}
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="right">Cerrar sesion</TooltipContent>
+          <TooltipContent side="right">Cerrar sesión</TooltipContent>
         </Tooltip>
       </div>
     </div>

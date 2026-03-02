@@ -36,7 +36,7 @@ export default async function AlertsPage() {
           Alertas de Stock
         </h1>
         <p className="text-muted-foreground">
-          Productos que necesitan reposicion urgente
+          Productos que necesitan reposición urgente
         </p>
       </div>
 
@@ -48,10 +48,10 @@ export default async function AlertsPage() {
               aria-hidden="true"
             />
             <p className="text-lg font-semibold text-emerald-400">
-              Todo el stock esta al dia
+              Todo el stock está al día
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              Ningun producto por debajo del minimo configurado
+              Ningún producto por debajo del mínimo configurado
             </p>
           </div>
         </div>
@@ -64,7 +64,7 @@ export default async function AlertsPage() {
                 id="critical-heading"
                 className="text-lg font-semibold"
               >
-                Stock Critico
+                Stock Crítico
               </h2>
               <Badge
                 variant="destructive"

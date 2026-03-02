@@ -14,8 +14,8 @@ import {
 import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
-  { label: 'Caracteristicas', href: '#caracteristicas' },
-  { label: 'Como funciona', href: '#como-funciona' },
+  { label: 'Características', href: '#caracteristicas' },
+  { label: 'Cómo funciona', href: '#como-funciona' },
   { label: 'Precios', href: '#precios' },
 ] as const
 
@@ -65,7 +65,7 @@ export function LandingNavbar() {
         {/* Desktop actions */}
         <div className="hidden items-center gap-3 md:flex">
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/login">Iniciar sesion</Link>
+            <Link href="/login">Iniciar sesión</Link>
           </Button>
           <Button
             size="sm"
@@ -117,7 +117,7 @@ export function LandingNavbar() {
               <div className="flex flex-col gap-3 border-t border-white/[0.06] pt-4">
                 <Button variant="outline" asChild className="w-full">
                   <Link href="/login" onClick={() => setOpen(false)}>
-                    Iniciar sesion
+                    Iniciar sesión
                   </Link>
                 </Button>
                 <Button

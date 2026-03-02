@@ -65,7 +65,7 @@ export default async function ReportsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Reportes</h1>
           <p className="text-muted-foreground">
-            Analisis y visualizacion de datos del inventario
+            Análisis y visualización de datos del inventario
           </p>
         </div>
         <ExportPdfButton />
@@ -92,7 +92,7 @@ export default async function ReportsPage() {
           <div className="glass-card rounded-xl p-6">
             <div className="mb-4">
               <h2 className="text-base font-semibold">
-                Movimientos ultimos 30 dias
+                Movimientos últimos 30 días
               </h2>
               <p className="text-sm text-muted-foreground">
                 Ingresos vs egresos en valor monetario
@@ -106,10 +106,10 @@ export default async function ReportsPage() {
           <div className="glass-card rounded-xl p-6">
             <div className="mb-4">
               <h2 className="text-base font-semibold">
-                Stock por Categoria
+                Stock por Categoría
               </h2>
               <p className="text-sm text-muted-foreground">
-                Distribucion de unidades por categoria de producto
+                Distribución de unidades por categoría de producto
               </p>
             </div>
             <StockByCategoryChart data={stockByCategory} />
