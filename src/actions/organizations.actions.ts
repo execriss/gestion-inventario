@@ -10,8 +10,9 @@ import { type UserRole } from '@/types/database.types'
 type ActionResult = { success: true } | { error: string }
 
 const orgSchema = z.object({
-  name:     z.string().min(2).max(100),
-  logo_url: z.url().optional().or(z.literal('')),
+  name:                 z.string().min(2).max(100),
+  logo_url:             z.url().optional().or(z.literal('')),
+  email_alerts_enabled: z.boolean().optional(),
 })
 
 // ── Organización ───────────────────────────────────────────────
@@ -28,8 +29,9 @@ export async function updateOrganization(data: unknown): Promise<ActionResult> {
     const { error } = await supabase
       .from('organizations')
       .update({
-        name:     parsed.data.name,
-        logo_url: parsed.data.logo_url || null,
+        name:                 parsed.data.name,
+        logo_url:             parsed.data.logo_url || null,
+        email_alerts_enabled: parsed.data.email_alerts_enabled,
       })
       .eq('id', auth.orgId)
 

@@ -2,8 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { requireOrgRole } from '@/lib/supabase/org'
 import { movementSchema } from '@/lib/validations/movement.schema'
+import { sendStockAlert } from '@/lib/email/resend'
 
 type ActionResult = { success: true } | { error: string }
 
@@ -42,6 +44,17 @@ export async function createMovement(data: unknown): Promise<ActionResult> {
       return { error: 'Error al registrar el movimiento' }
     }
 
+    // Fire-and-forget: verificar stock bajo y enviar alerta por email
+    if (parsed.data.type === 'egreso') {
+      checkAndSendStockAlert(
+        supabase,
+        auth.orgId,
+        parsed.data.product_id
+      ).catch(() => {
+        // Silently ignore email errors — the movement was already recorded
+      })
+    }
+
     revalidatePath('/movements')
     revalidatePath('/products')
     revalidatePath('/dashboard')
@@ -49,4 +62,75 @@ export async function createMovement(data: unknown): Promise<ActionResult> {
   } catch {
     return { error: 'Error inesperado al registrar el movimiento' }
   }
+}
+
+// ── Stock alert helper (fire-and-forget) ──────────────────────────
+
+async function checkAndSendStockAlert(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  orgId: string,
+  productId: string
+) {
+  // 1. Consultar el producto actualizado
+  const { data: product } = await supabase
+    .from('products')
+    .select('name, sku, current_stock, min_stock, units(abbreviation)')
+    .eq('id', productId)
+    .single()
+
+  if (!product) return
+  if (product.current_stock >= product.min_stock) return
+
+  // 2. Verificar si la org tiene alertas habilitadas
+  const { data: org } = await supabase
+    .from('organizations')
+    .select('name, email_alerts_enabled')
+    .eq('id', orgId)
+    .single()
+
+  if (!org || !org.email_alerts_enabled) return
+
+  // 3. Obtener los user_ids de los admins de la org
+  const { data: admins } = await supabase
+    .from('organization_members')
+    .select('user_id')
+    .eq('organization_id', orgId)
+    .eq('role', 'admin')
+
+  if (!admins || admins.length === 0) return
+
+  // 4. Obtener emails de cada admin via service_role
+  const adminClient = createAdminClient()
+  const adminEmails: string[] = []
+
+  for (const admin of admins) {
+    try {
+      const { data } = await adminClient.auth.admin.getUserById(admin.user_id)
+      if (data?.user?.email) {
+        adminEmails.push(data.user.email)
+      }
+    } catch {
+      // Skip this admin if we can't get their email
+    }
+  }
+
+  if (adminEmails.length === 0) return
+
+  // 5. Enviar la alerta
+  const unit = (product.units as { abbreviation: string } | null)?.abbreviation ?? ''
+
+  await sendStockAlert({
+    to: adminEmails,
+    orgName: org.name,
+    products: [
+      {
+        name: product.name,
+        sku: product.sku,
+        current_stock: product.current_stock,
+        min_stock: product.min_stock,
+        unit,
+      },
+    ],
+    appUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001',
+  })
 }

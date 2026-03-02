@@ -40,32 +40,35 @@ export interface Database {
       }
       organizations: {
         Row: {
-          id:         string
-          name:       string
-          slug:       string
-          logo_url:   string | null
-          plan:       OrgPlan
-          is_active:  boolean
-          created_at: string
-          updated_at: string
+          id:                   string
+          name:                 string
+          slug:                 string
+          logo_url:             string | null
+          plan:                 OrgPlan
+          is_active:            boolean
+          email_alerts_enabled: boolean
+          created_at:           string
+          updated_at:           string
         }
         Insert: {
-          id?:         string
-          name:        string
-          slug:        string
-          logo_url?:   string | null
-          plan?:       OrgPlan
-          is_active?:  boolean
-          created_at?: string
-          updated_at?: string
+          id?:                   string
+          name:                  string
+          slug:                  string
+          logo_url?:             string | null
+          plan?:                 OrgPlan
+          is_active?:            boolean
+          email_alerts_enabled?: boolean
+          created_at?:           string
+          updated_at?:           string
         }
         Update: {
-          name?:       string
-          slug?:       string
-          logo_url?:   string | null
-          plan?:       OrgPlan
-          is_active?:  boolean
-          updated_at?: string
+          name?:                 string
+          slug?:                 string
+          logo_url?:             string | null
+          plan?:                 OrgPlan
+          is_active?:            boolean
+          email_alerts_enabled?: boolean
+          updated_at?:           string
         }
         Relationships: []
       }
