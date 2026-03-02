@@ -6,6 +6,7 @@ import {
   StockByCategoryChart,
   TopProductsChart,
 } from '@/components/reports/report-charts'
+import { ExportPdfButton } from '@/components/reports/export-pdf-button'
 import {
   DEMO_MODE,
   DEMO_MOVEMENTS_30D,
@@ -60,11 +61,14 @@ export default async function ReportsPage() {
   return (
     <div className="space-y-6">
       {/* Titulo de pagina */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Reportes</h1>
-        <p className="text-muted-foreground">
-          Analisis y visualizacion de datos del inventario
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Reportes</h1>
+          <p className="text-muted-foreground">
+            Analisis y visualizacion de datos del inventario
+          </p>
+        </div>
+        <ExportPdfButton />
       </div>
 
       {/* Tabs de reportes */}
