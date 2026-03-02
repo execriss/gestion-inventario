@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { UserCircle, Building2, Users } from 'lucide-react'
+import { UserCircle, Building2, Users, Crown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const SETTINGS_NAV = [
   { label: 'Perfil', href: '/settings/profile', icon: UserCircle },
   { label: 'Organizacion', href: '/settings/organization', icon: Building2 },
   { label: 'Equipo', href: '/settings/members', icon: Users },
+  { label: 'Plan & Upgrade', href: '/settings/upgrade', icon: Crown },
 ]
 
 export default function SettingsLayout({

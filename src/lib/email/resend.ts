@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 import { StockAlertEmail } from './templates/stock-alert'
+import { UpgradeRequestEmail } from './templates/upgrade-request'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -33,5 +34,30 @@ export async function sendStockAlert(params: SendStockAlertParams): Promise<void
       products: params.products,
       alertsUrl,
     }),
+  })
+}
+
+// ── Upgrade Request ─────────────────────────────────────────────
+
+interface SendUpgradeRequestParams {
+  orgName: string
+  contactName: string
+  contactEmail: string
+  currentProducts: number
+  currentMembers: number
+  message?: string
+}
+
+export async function sendUpgradeRequest(params: SendUpgradeRequestParams): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return
+  const adminEmail = process.env.ADMIN_EMAIL
+  if (!adminEmail) return
+
+  await resend.emails.send({
+    from: 'Inventario Pro <alertas@inventariopro.com>',
+    to: [adminEmail],
+    replyTo: params.contactEmail,
+    subject: `Solicitud de upgrade a Pro — ${params.orgName}`,
+    react: UpgradeRequestEmail({ ...params }),
   })
 }

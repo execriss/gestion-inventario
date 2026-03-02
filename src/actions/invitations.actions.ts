@@ -35,6 +35,19 @@ export async function createInvitation(data: unknown): Promise<
     const parsed = createInvSchema.safeParse(data)
     if (!parsed.success) return { error: parsed.error.issues[0].message }
 
+    // Verificar límite del plan Free (3 miembros)
+    const [orgResult, memberCount] = await Promise.all([
+      supabase.from('organizations').select('plan').eq('id', auth.orgId).single(),
+      supabase.from('organization_members').select('id', { count: 'exact', head: true })
+        .eq('organization_id', auth.orgId),
+    ])
+
+    if (orgResult.data?.plan === 'free' && (memberCount.count ?? 0) >= 3) {
+      return {
+        error: 'Límite del plan Free: máximo 3 miembros. Actualizá a Pro desde Configuración → Plan & Upgrade.',
+      }
+    }
+
     const { data: inv, error } = await supabase
       .from('organization_invitations')
       .insert({

@@ -424,7 +424,7 @@ export default function LandingPage() {
                 asChild
                 className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 font-semibold text-white hover:from-cyan-400 hover:to-blue-500 hover:shadow-lg hover:shadow-cyan-500/25"
               >
-                <Link href="/register">Empezar prueba gratis</Link>
+                <Link href="/register?plan=pro">Contactar para Pro</Link>
               </Button>
             </div>
           </div>

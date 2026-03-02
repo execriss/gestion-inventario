@@ -27,6 +27,19 @@ export async function createProduct(data: unknown): Promise<ActionResult> {
       return { error: parsed.error.issues[0].message }
     }
 
+    // Verificar límite del plan Free (100 productos activos)
+    const [orgResult, productCount] = await Promise.all([
+      supabase.from('organizations').select('plan').eq('id', auth.orgId).single(),
+      supabase.from('products').select('id', { count: 'exact', head: true })
+        .eq('organization_id', auth.orgId).eq('is_active', true),
+    ])
+
+    if (orgResult.data?.plan === 'free' && (productCount.count ?? 0) >= 100) {
+      return {
+        error: 'Límite del plan Free: máximo 100 productos activos. Actualizá a Pro desde Configuración → Plan & Upgrade.',
+      }
+    }
+
     const sku = parsed.data.sku || generateSku()
 
     const { error } = await supabase.from('products').insert({
