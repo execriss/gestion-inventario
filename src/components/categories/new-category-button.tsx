@@ -10,7 +10,7 @@ export function NewCategoryButton() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>
+      <Button onClick={() => setOpen(true)} className="w-full sm:w-auto">
         <Plus className="size-4" />
         Nueva Categoría
       </Button>

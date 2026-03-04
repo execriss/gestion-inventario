@@ -255,20 +255,27 @@ export async function acceptInvitation(
       return { error: 'Se requiere nombre, email y contraseña para unirse.' }
     }
 
-    const { data: authData, error: signUpError } = await supabase.auth.signUp({
+    // Usar admin.createUser para bypasear confirmación de email
+    // (el link de invitación ya actúa como verificación)
+    const { data: createData, error: createError } = await admin.auth.admin.createUser({
       email,
       password,
-      options: { data: { full_name } },
+      user_metadata: { full_name },
+      email_confirm: true,
     })
 
-    if (signUpError || !authData.user) {
-      if (signUpError?.message?.toLowerCase().includes('already registered')) {
+    if (createError || !createData.user) {
+      const msg = createError?.message?.toLowerCase() ?? ''
+      if (msg.includes('already registered') || msg.includes('user already exists') || msg.includes('already been registered')) {
         return { error: 'Ya existe una cuenta con ese email. Iniciá sesión primero.' }
       }
       return { error: 'Error al crear la cuenta.' }
     }
 
-    userId = authData.user.id
+    userId = createData.user.id
+
+    // Auto-login para que el redirect a /dashboard funcione
+    await supabase.auth.signInWithPassword({ email, password })
   }
 
   // 3. Agregar como miembro (service_role, sin RLS)

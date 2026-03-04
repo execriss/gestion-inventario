@@ -6,7 +6,6 @@ import {
   StockByCategoryChart,
   TopProductsChart,
 } from '@/components/reports/report-charts'
-import { ExportPdfButton } from '@/components/reports/export-pdf-button'
 import {
   DEMO_MODE,
   DEMO_MOVEMENTS_30D,
@@ -68,7 +67,6 @@ export default async function ReportsPage() {
             Análisis y visualización de datos del inventario
           </p>
         </div>
-        <ExportPdfButton />
       </div>
 
       {/* Tabs de reportes */}

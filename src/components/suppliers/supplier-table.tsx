@@ -48,6 +48,7 @@ export function SupplierTable({ suppliers }: SupplierTableProps) {
   return (
     <>
       <div className="glass-card rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
@@ -103,6 +104,7 @@ export function SupplierTable({ suppliers }: SupplierTableProps) {
             ))}
           </TableBody>
         </Table>
+        </div>
       </div>
 
       {editingSupplier && (

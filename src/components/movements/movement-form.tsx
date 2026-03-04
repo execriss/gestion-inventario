@@ -10,7 +10,6 @@ import {
   Check,
   ChevronsUpDown,
   Loader2,
-  Package,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -81,7 +80,7 @@ export function MovementForm({ type, products, suppliers = [] }: MovementFormPro
       type,
       product_id: '',
       quantity: undefined,
-      unit_price: 0,
+      unit_price: undefined,
       supplier_id: '',
       reference: '',
       notes: '',
@@ -313,7 +312,7 @@ export function MovementForm({ type, products, suppliers = [] }: MovementFormPro
                         value={field.value ?? ''}
                         onChange={(e) => {
                           const val = e.target.value
-                          field.onChange(val === '' ? 0 : Number(val))
+                          field.onChange(val === '' ? undefined : Number(val))
                         }}
                       />
                     </div>

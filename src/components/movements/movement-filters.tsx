@@ -164,7 +164,15 @@ export function MovementFilters({ products, suppliers }: MovementFiltersProps) {
           <Input
             type="date"
             value={currentDateFrom}
-            onChange={(e) => updateFilter('date_from', e.target.value)}
+            max={currentDateTo || undefined}
+            onChange={(e) => {
+              const val = e.target.value
+              updateFilter('date_from', val)
+              // Si el nuevo desde supera al hasta, limpiar hasta
+              if (currentDateTo && val > currentDateTo) {
+                updateFilter('date_to', '')
+              }
+            }}
             className="w-full"
           />
         </div>
@@ -175,7 +183,13 @@ export function MovementFilters({ products, suppliers }: MovementFiltersProps) {
           <Input
             type="date"
             value={currentDateTo}
-            onChange={(e) => updateFilter('date_to', e.target.value)}
+            min={currentDateFrom || undefined}
+            onChange={(e) => {
+              const val = e.target.value
+              // No permitir hasta < desde
+              if (currentDateFrom && val && val < currentDateFrom) return
+              updateFilter('date_to', val)
+            }}
             className="w-full"
           />
         </div>

@@ -19,8 +19,8 @@ export async function createClient() {
               cookieStore.set(name, value, options)
             )
           } catch {
-            // setAll puede fallar en Server Components — es seguro ignorarlo
-            // si hay un middleware que refresca la sesión
+            // setAll puede fallar en Server Components (read-only response)
+            // El cliente refresca la sesión automáticamente en el próximo request
           }
         },
       },

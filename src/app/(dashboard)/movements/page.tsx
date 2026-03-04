@@ -5,8 +5,6 @@ import {
   ArrowUpFromLine,
   ChevronLeft,
   ChevronRight,
-  Download,
-  FileText,
   History,
 } from 'lucide-react'
 
@@ -15,6 +13,7 @@ import type { MovementWithRelations } from '@/types/database.types'
 import { Button } from '@/components/ui/button'
 import { MovementTable } from '@/components/movements/movement-table'
 import { MovementFilters } from '@/components/movements/movement-filters'
+import { ExportCsvButton } from '@/components/movements/export-csv-button'
 import {
   DEMO_MODE,
   DEMO_RECENT_MOVEMENTS,
@@ -145,7 +144,6 @@ export default async function MovementsPage({
   if (dateToFilter) exportParams.set('date_to', dateToFilter)
   const exportQs = exportParams.toString()
   const csvExportHref = `/api/export/movements${exportQs ? `?${exportQs}` : ''}`
-  const pdfExportHref = `/api/export/report?tab=movements${exportQs ? `&${exportQs}` : ''}`
 
   function paginationHref(targetPage: number) {
     const params = new URLSearchParams()
@@ -180,18 +178,7 @@ export default async function MovementsPage({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button asChild variant="outline" size="sm">
-            <a href={csvExportHref} download>
-              <Download className="size-4" />
-              CSV
-            </a>
-          </Button>
-          <Button asChild variant="outline" size="sm">
-            <a href={pdfExportHref} download>
-              <FileText className="size-4" />
-              PDF
-            </a>
-          </Button>
+          <ExportCsvButton href={csvExportHref} />
           <Button asChild variant="default" className="bg-emerald-600 hover:bg-emerald-500">
             <Link href="/movements/ingreso">
               <ArrowDownToLine className="size-4" />

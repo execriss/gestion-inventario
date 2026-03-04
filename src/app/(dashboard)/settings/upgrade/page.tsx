@@ -67,7 +67,7 @@ export default async function UpgradePage() {
     <div className="space-y-6">
       {/* Banner de plan actual */}
       <div className="glass-card rounded-xl p-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
               <Crown

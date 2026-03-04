@@ -32,7 +32,7 @@ export default function SettingsLayout({
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Sidebar nav */}
         <nav
-          className="flex gap-1 lg:w-56 lg:shrink-0 lg:flex-col"
+          className="flex gap-1 overflow-x-auto pb-2 lg:pb-0 lg:w-56 lg:shrink-0 lg:flex-col"
           aria-label="Secciones de configuracion"
         >
           {SETTINGS_NAV.map((item) => {
@@ -43,7 +43,7 @@ export default function SettingsLayout({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  'flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   isActive
                     ? 'bg-primary/10 text-primary neon-text-cyan'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'

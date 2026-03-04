@@ -104,7 +104,7 @@ export function MembersSection({ members }: MembersSectionProps) {
             return (
               <div
                 key={member.id}
-                className="flex items-center gap-3 rounded-lg border border-border/50 bg-background/30 px-4 py-3"
+                className="flex flex-wrap items-center gap-3 rounded-lg border border-border/50 bg-background/30 px-4 py-3"
               >
                 <Avatar className="size-9 shrink-0">
                   {avatarUrl && <AvatarImage src={avatarUrl} alt="" />}
@@ -129,40 +129,42 @@ export function MembersSection({ members }: MembersSectionProps) {
                   {ROLE_LABELS[role] ?? role}
                 </Badge>
 
-                <Select
-                  defaultValue={role}
-                  onValueChange={(value) =>
-                    handleRoleChange(member.id, value as UserRole)
-                  }
-                  disabled={isPending}
-                >
-                  <SelectTrigger className="w-32 shrink-0" aria-label="Cambiar rol">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="operator">Operador</SelectItem>
-                    <SelectItem value="viewer">Observador</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex w-full items-center gap-2 sm:w-auto">
+                  <Select
+                    defaultValue={role}
+                    onValueChange={(value) =>
+                      handleRoleChange(member.id, value as UserRole)
+                    }
+                    disabled={isPending}
+                  >
+                    <SelectTrigger className="w-full sm:w-32" aria-label="Cambiar rol">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="operator">Operador</SelectItem>
+                      <SelectItem value="viewer">Observador</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-8 shrink-0 text-muted-foreground hover:text-destructive"
-                  onClick={() => handleRemove(member.id, name)}
-                  disabled={isPending}
-                  aria-label={`Eliminar a ${name}`}
-                >
-                  {isPending ? (
-                    <Loader2
-                      className="size-4 animate-spin"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <Trash2 className="size-4" aria-hidden="true" />
-                  )}
-                </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-8 shrink-0 text-muted-foreground hover:text-destructive"
+                    onClick={() => handleRemove(member.id, name)}
+                    disabled={isPending}
+                    aria-label={`Eliminar a ${name}`}
+                  >
+                    {isPending ? (
+                      <Loader2
+                        className="size-4 animate-spin"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <Trash2 className="size-4" aria-hidden="true" />
+                    )}
+                  </Button>
+                </div>
               </div>
             )
           })}

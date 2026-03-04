@@ -90,6 +90,7 @@ export function ProductsTable({ products, categories }: ProductsTableProps) {
       </div>
 
       <div className="glass-card rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
@@ -189,6 +190,7 @@ export function ProductsTable({ products, categories }: ProductsTableProps) {
             )}
           </TableBody>
         </Table>
+        </div>
       </div>
     </div>
   )

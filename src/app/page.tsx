@@ -115,15 +115,6 @@ const FREE_FEATURES = [
   'Alertas basicas',
 ]
 
-const PRO_FEATURES = [
-  'Productos ilimitados',
-  'Multiples organizaciones',
-  'Usuarios ilimitados',
-  'Exportación CSV + PDF',
-  'Reportes avanzados',
-  'Email notifications',
-  'Soporte prioritario',
-]
 
 /* ================================================================
    PAGE
@@ -341,10 +332,10 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Pricing cards */}
-          <div className="grid gap-6 md:grid-cols-2">
+          {/* Pricing card */}
+          <div className="mx-auto max-w-sm">
             {/* FREE */}
-            <div className="glass-card flex flex-col rounded-2xl p-8">
+            <div className="glass-card neon-glow-cyan flex flex-col rounded-2xl border-primary/30 p-8">
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-foreground">
                   Gratuito
@@ -376,55 +367,12 @@ export default function LandingPage() {
                 ))}
               </ul>
 
-              <Button variant="outline" size="lg" asChild className="w-full">
-                <Link href="/register">Empezar gratis</Link>
-              </Button>
-            </div>
-
-            {/* PRO */}
-            <div className="glass-card neon-glow-cyan relative flex flex-col rounded-2xl border-primary/30 p-8">
-              {/* Popular badge */}
-              <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-1 text-xs font-semibold text-white">
-                Más popular
-              </Badge>
-
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-foreground">Pro</h3>
-                <div className="mt-3 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold tracking-tight text-foreground">
-                    $29
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    USD / mes
-                  </span>
-                </div>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  Para negocios en crecimiento que necesitan el control total.
-                </p>
-              </div>
-
-              <ul className="mb-8 flex-1 space-y-3">
-                {PRO_FEATURES.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-center gap-2.5 text-sm text-foreground/80"
-                  >
-                    <Check
-                      className="size-4 shrink-0 text-primary"
-                      strokeWidth={2}
-                      aria-hidden="true"
-                    />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
               <Button
                 size="lg"
                 asChild
                 className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 font-semibold text-white hover:from-cyan-400 hover:to-blue-500 hover:shadow-lg hover:shadow-cyan-500/25"
               >
-                <Link href="/register?plan=pro">Contactar para Pro</Link>
+                <Link href="/register">Empezar gratis</Link>
               </Button>
             </div>
           </div>

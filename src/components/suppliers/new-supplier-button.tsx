@@ -10,7 +10,7 @@ export function NewSupplierButton() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>
+      <Button onClick={() => setOpen(true)} className="w-full sm:w-auto">
         <Plus className="size-4" />
         Nuevo Proveedor
       </Button>

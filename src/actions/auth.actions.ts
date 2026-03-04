@@ -105,7 +105,7 @@ export async function registerAction(
 
     const { data: org, error: orgError } = await admin
       .from('organizations')
-      .insert({ name: org_name, slug })
+      .insert({ name: org_name, slug, email_alerts_enabled: false })
       .select('id')
       .single()
 
@@ -115,7 +115,7 @@ export async function registerAction(
         const uniqueSlug = `${slug}-${Math.random().toString(36).slice(2, 6)}`
         const { data: org2, error: org2Error } = await admin
           .from('organizations')
-          .insert({ name: org_name, slug: uniqueSlug })
+          .insert({ name: org_name, slug: uniqueSlug, email_alerts_enabled: false })
           .select('id')
           .single()
 

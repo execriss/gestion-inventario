@@ -50,60 +50,62 @@ export function RecentMovements({ movements }: RecentMovementsProps) {
           No hay movimientos registrados
         </p>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Tiempo</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Producto</TableHead>
-              <TableHead>Cant.</TableHead>
-              <TableHead className="text-right">Total</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {movements.map((movement) => (
-              <TableRow key={movement.id}>
-                <TableCell className="text-muted-foreground text-xs">
-                  {formatDistanceToNow(new Date(movement.created_at), {
-                    addSuffix: true,
-                    locale: es,
-                  })}
-                </TableCell>
-                <TableCell>
-                  {movement.type === 'ingreso' ? (
-                    <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20">
-                      <ArrowDownToLine className="h-3 w-3 mr-1" aria-hidden="true" />
-                      Ingreso
-                    </Badge>
-                  ) : (
-                    <Badge className="bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/20">
-                      <ArrowUpFromLine className="h-3 w-3 mr-1" aria-hidden="true" />
-                      Egreso
-                    </Badge>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <p className="text-sm font-medium">
-                      {movement.products?.name ?? 'Producto eliminado'}
-                    </p>
-                    {movement.products?.sku && (
-                      <p className="text-xs text-muted-foreground">
-                        {movement.products.sku}
-                      </p>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="tabular-nums">
-                  {movement.quantity}
-                </TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {formatCurrency(movement.total_price)}
-                </TableCell>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Tiempo</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>Producto</TableHead>
+                <TableHead>Cant.</TableHead>
+                <TableHead className="text-right">Total</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {movements.map((movement) => (
+                <TableRow key={movement.id}>
+                  <TableCell className="whitespace-nowrap text-muted-foreground text-xs">
+                    {formatDistanceToNow(new Date(movement.created_at), {
+                      addSuffix: true,
+                      locale: es,
+                    })}
+                  </TableCell>
+                  <TableCell>
+                    {movement.type === 'ingreso' ? (
+                      <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20">
+                        <ArrowDownToLine className="h-3 w-3 mr-1" aria-hidden="true" />
+                        Ingreso
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/20">
+                        <ArrowUpFromLine className="h-3 w-3 mr-1" aria-hidden="true" />
+                        Egreso
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <p className="text-sm font-medium">
+                        {movement.products?.name ?? 'Producto eliminado'}
+                      </p>
+                      {movement.products?.sku && (
+                        <p className="text-xs text-muted-foreground">
+                          {movement.products.sku}
+                        </p>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="tabular-nums">
+                    {movement.quantity}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {formatCurrency(movement.total_price)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )}
     </div>
   )
