@@ -9,7 +9,7 @@ const SETTINGS_NAV = [
   { label: 'Perfil', href: '/settings/profile', icon: UserCircle },
   { label: 'Organizacion', href: '/settings/organization', icon: Building2 },
   { label: 'Equipo', href: '/settings/members', icon: Users },
-  { label: 'Plan & Upgrade', href: '/settings/upgrade', icon: Crown },
+  { label: 'Plan', href: '/settings/upgrade', icon: Crown },
 ]
 
 export default function SettingsLayout({
@@ -32,7 +32,7 @@ export default function SettingsLayout({
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Sidebar nav */}
         <nav
-          className="flex gap-1 overflow-x-auto pb-2 lg:pb-0 lg:w-56 lg:shrink-0 lg:flex-col"
+          className="flex gap-1 overflow-x-auto pb-2 [scrollbar-width:none] lg:pb-0 lg:w-56 lg:shrink-0 lg:flex-col"
           aria-label="Secciones de configuracion"
         >
           {SETTINGS_NAV.map((item) => {

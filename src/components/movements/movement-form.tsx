@@ -409,12 +409,12 @@ export function MovementForm({ type, products, suppliers = [] }: MovementFormPro
           />
 
           {/* Submit */}
-          <div className="flex items-center gap-3 pt-2">
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
             <Button
               type="submit"
               disabled={isPending}
               className={cn(
-                'min-w-[180px]',
+                'w-full sm:w-auto sm:min-w-[180px]',
                 isIngreso
                   ? 'bg-emerald-600 text-white hover:bg-emerald-500'
                   : 'bg-destructive text-white hover:bg-destructive/90'

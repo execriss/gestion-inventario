@@ -58,11 +58,11 @@ export function MovementTable({ movements }: MovementTableProps) {
               <TableHead>Tipo</TableHead>
               <TableHead>Producto</TableHead>
               <TableHead className="text-right">Cantidad</TableHead>
-              <TableHead className="text-right">Precio Unit.</TableHead>
+              <TableHead className="hidden md:table-cell text-right">Precio Unit.</TableHead>
               <TableHead className="text-right">Total</TableHead>
-              <TableHead>Proveedor</TableHead>
-              <TableHead>Referencia</TableHead>
-              <TableHead>Usuario</TableHead>
+              <TableHead className="hidden lg:table-cell">Proveedor</TableHead>
+              <TableHead className="hidden lg:table-cell">Referencia</TableHead>
+              <TableHead className="hidden md:table-cell">Usuario</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -103,7 +103,7 @@ export function MovementTable({ movements }: MovementTableProps) {
                   {movement.quantity.toLocaleString('es-AR')}
                 </TableCell>
 
-                <TableCell className="text-right tabular-nums">
+                <TableCell className="hidden md:table-cell text-right tabular-nums">
                   {formatCurrency(movement.unit_price)}
                 </TableCell>
 
@@ -111,15 +111,15 @@ export function MovementTable({ movements }: MovementTableProps) {
                   {formatCurrency(movement.total_price)}
                 </TableCell>
 
-                <TableCell className="text-muted-foreground">
+                <TableCell className="hidden lg:table-cell text-muted-foreground">
                   {movement.suppliers?.name ?? '—'}
                 </TableCell>
 
-                <TableCell className="max-w-[150px] truncate text-muted-foreground">
+                <TableCell className="hidden lg:table-cell max-w-[150px] truncate text-muted-foreground">
                   {movement.reference ?? '—'}
                 </TableCell>
 
-                <TableCell className="text-muted-foreground">
+                <TableCell className="hidden md:table-cell text-muted-foreground">
                   {movement.profiles?.full_name ?? 'Sistema'}
                 </TableCell>
               </TableRow>

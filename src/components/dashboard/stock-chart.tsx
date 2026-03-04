@@ -63,11 +63,11 @@ export default function StockChart({ data }: StockChartProps) {
   }))
 
   return (
-    <div className="h-64 w-full">
+    <div className="h-72 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={chartData}
-          margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+          margin={{ top: 5, right: 10, left: 0, bottom: 20 }}
         >
           <CartesianGrid
             strokeDasharray="3 3"
@@ -79,6 +79,10 @@ export default function StockChart({ data }: StockChartProps) {
             tick={{ fontSize: 11, fill: 'oklch(0.58 0.01 240)' }}
             axisLine={{ stroke: 'oklch(1 0 0 / 8%)' }}
             tickLine={false}
+            angle={-30}
+            textAnchor="end"
+            height={50}
+            interval={0}
           />
           <YAxis
             tick={{ fontSize: 11, fill: 'oklch(0.58 0.01 240)' }}

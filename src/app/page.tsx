@@ -177,7 +177,7 @@ export default function LandingPage() {
           </div>
 
           {/* Stats */}
-          <div className="mx-auto mt-16 grid max-w-lg grid-cols-3 gap-8">
+          <div className="mx-auto mt-16 grid max-w-lg grid-cols-3 gap-4 sm:gap-8">
             {[
               { icon: Building2, label: 'Multi-empresa' },
               { icon: Activity, label: 'Tiempo real' },
@@ -433,7 +433,7 @@ export default function LandingPage() {
           </div>
 
           {/* Links */}
-          <nav className="flex flex-wrap justify-center gap-6" aria-label="Footer">
+          <nav className="flex flex-wrap justify-center gap-4 sm:gap-6" aria-label="Footer">
             <a
               href="#caracteristicas"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"

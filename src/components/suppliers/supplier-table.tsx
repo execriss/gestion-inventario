@@ -54,8 +54,8 @@ export function SupplierTable({ suppliers }: SupplierTableProps) {
             <TableRow className="hover:bg-transparent">
               <TableHead>Nombre</TableHead>
               <TableHead>Contacto</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Teléfono</TableHead>
+              <TableHead className="hidden md:table-cell">Email</TableHead>
+              <TableHead className="hidden sm:table-cell">Teléfono</TableHead>
               <TableHead className="w-[70px]">Acciones</TableHead>
             </TableRow>
           </TableHeader>
@@ -66,10 +66,10 @@ export function SupplierTable({ suppliers }: SupplierTableProps) {
                 <TableCell className="text-muted-foreground">
                   {supplier.contact || '—'}
                 </TableCell>
-                <TableCell className="text-muted-foreground">
+                <TableCell className="hidden md:table-cell text-muted-foreground">
                   {supplier.email || '—'}
                 </TableCell>
-                <TableCell className="text-muted-foreground">
+                <TableCell className="hidden sm:table-cell text-muted-foreground">
                   {supplier.phone || '—'}
                 </TableCell>
                 <TableCell>

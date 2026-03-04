@@ -101,7 +101,7 @@ export default function StockByCategoryChart({
             tick={{ fontSize: 11, fill: 'oklch(0.58 0.01 240)' }}
             axisLine={{ stroke: 'oklch(1 0 0 / 8%)' }}
             tickLine={false}
-            width={100}
+            width={80}
           />
           <Tooltip
             content={CustomTooltip}

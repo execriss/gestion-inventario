@@ -346,7 +346,7 @@ export function ProductForm({ categories, units, product }: ProductFormProps) {
           </div>
         </div>
 
-        <div className="flex justify-end gap-3">
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Button
             type="button"
             variant="outline"

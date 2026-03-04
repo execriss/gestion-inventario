@@ -71,17 +71,17 @@ export default async function ReportsPage() {
 
       {/* Tabs de reportes */}
       <Tabs defaultValue="movimientos" className="space-y-4">
-        <TabsList>
+        <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="movimientos" className="gap-1.5">
-            <TrendingUp className="h-4 w-4" aria-hidden="true" />
+            <TrendingUp className="hidden sm:block h-4 w-4" aria-hidden="true" />
             Movimientos
           </TabsTrigger>
           <TabsTrigger value="stock" className="gap-1.5">
-            <BarChart3 className="h-4 w-4" aria-hidden="true" />
+            <BarChart3 className="hidden sm:block h-4 w-4" aria-hidden="true" />
             Stock
           </TabsTrigger>
           <TabsTrigger value="productos" className="gap-1.5">
-            <Package className="h-4 w-4" aria-hidden="true" />
+            <Package className="hidden sm:block h-4 w-4" aria-hidden="true" />
             Productos
           </TabsTrigger>
         </TabsList>

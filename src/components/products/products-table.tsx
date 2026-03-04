@@ -7,7 +7,6 @@ import { toast } from 'sonner'
 
 import type { Category, ProductWithRelations } from '@/types/database.types'
 import { deleteProduct } from '@/actions/products.actions'
-import { cn } from '@/lib/utils'
 import {
   Table,
   TableHeader,
@@ -63,9 +62,9 @@ export function ProductsTable({ products, categories }: ProductsTableProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue placeholder="Filtrar por categoría" />
           </SelectTrigger>
           <SelectContent>
@@ -94,13 +93,13 @@ export function ProductsTable({ products, categories }: ProductsTableProps) {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead>SKU</TableHead>
+              <TableHead className="hidden sm:table-cell">SKU</TableHead>
               <TableHead>Nombre</TableHead>
-              <TableHead>Unidad</TableHead>
+              <TableHead className="hidden md:table-cell">Unidad</TableHead>
               <TableHead className="text-right">Stock Actual</TableHead>
-              <TableHead className="text-right">Stock Mín.</TableHead>
+              <TableHead className="hidden lg:table-cell text-right">Stock Mín.</TableHead>
               <TableHead>Estado</TableHead>
-              <TableHead className="text-right">Precio Costo</TableHead>
+              <TableHead className="hidden md:table-cell text-right">Precio Costo</TableHead>
               <TableHead className="w-[70px]">Acciones</TableHead>
             </TableRow>
           </TableHeader>
@@ -117,7 +116,7 @@ export function ProductsTable({ products, categories }: ProductsTableProps) {
             ) : (
               filtered.map((product) => (
                 <TableRow key={product.id} className="hover:bg-muted/30">
-                  <TableCell className="font-mono text-xs text-muted-foreground">
+                  <TableCell className="hidden sm:table-cell font-mono text-xs text-muted-foreground">
                     {product.sku ?? '—'}
                   </TableCell>
                   <TableCell>
@@ -135,13 +134,13 @@ export function ProductsTable({ products, categories }: ProductsTableProps) {
                       </Badge>
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="hidden md:table-cell text-muted-foreground">
                     {product.units.abbreviation}
                   </TableCell>
                   <TableCell className="text-right font-medium tabular-nums">
                     {product.current_stock}
                   </TableCell>
-                  <TableCell className="text-right text-muted-foreground tabular-nums">
+                  <TableCell className="hidden lg:table-cell text-right text-muted-foreground tabular-nums">
                     {product.min_stock}
                   </TableCell>
                   <TableCell>
@@ -150,7 +149,7 @@ export function ProductsTable({ products, categories }: ProductsTableProps) {
                       minStock={product.min_stock}
                     />
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="hidden md:table-cell text-right tabular-nums">
                     {product.cost_price != null
                       ? `$${product.cost_price.toLocaleString('es-AR', {
                           minimumFractionDigits: 2,

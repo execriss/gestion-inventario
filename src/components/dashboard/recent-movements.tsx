@@ -58,7 +58,7 @@ export function RecentMovements({ movements }: RecentMovementsProps) {
                 <TableHead>Tipo</TableHead>
                 <TableHead>Producto</TableHead>
                 <TableHead>Cant.</TableHead>
-                <TableHead className="text-right">Total</TableHead>
+                <TableHead className="hidden sm:table-cell text-right">Total</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -98,7 +98,7 @@ export function RecentMovements({ movements }: RecentMovementsProps) {
                   <TableCell className="tabular-nums">
                     {movement.quantity}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="hidden sm:table-cell text-right tabular-nums">
                     {formatCurrency(movement.total_price)}
                   </TableCell>
                 </TableRow>

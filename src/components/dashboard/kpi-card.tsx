@@ -44,7 +44,7 @@ export function KpiCard({ title, value, subtitle, icon: Icon, color }: KpiCardPr
     <div className="glass-card rounded-xl p-5 relative overflow-hidden">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <p className="text-3xl font-bold tracking-tight">{value}</p>
+          <p className="text-2xl sm:text-3xl font-bold tracking-tight">{value}</p>
           <p className="text-sm text-muted-foreground">{title}</p>
           {subtitle && (
             <p className="text-xs text-muted-foreground/70">{subtitle}</p>
