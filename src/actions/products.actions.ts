@@ -4,8 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { requireOrgRole } from '@/lib/supabase/org'
 import { productSchema } from '@/lib/validations/product.schema'
-
-type ActionResult = { success: true } | { error: string }
+import { type ActionResult } from '@/lib/utils'
 
 function generateSku(): string {
   return `PRD-${Date.now().toString(36).toUpperCase()}`
@@ -97,6 +96,7 @@ export async function updateProduct(
         sale_price:  parsed.data.sale_price ?? null,
       })
       .eq('id', id)
+      .eq('organization_id', auth.orgId)
 
     if (error) {
       if (error.code === '23505') {
@@ -123,6 +123,7 @@ export async function deleteProduct(id: string): Promise<ActionResult> {
       .from('products')
       .update({ is_active: false })
       .eq('id', id)
+      .eq('organization_id', auth.orgId)
 
     if (error) {
       return { error: 'Error al eliminar el producto' }

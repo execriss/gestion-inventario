@@ -6,8 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireOrgRole } from '@/lib/supabase/org'
 import { type UserRole } from '@/types/database.types'
-
-type ActionResult = { success: true } | { error: string }
+import { type ActionResult } from '@/lib/utils'
 
 const orgSchema = z.object({
   name:                 z.string().min(2).max(100),
@@ -219,92 +218,96 @@ const acceptSchema = z.object({
 export async function acceptInvitation(
   data: unknown
 ): Promise<{ error: string } | { success: true; orgName: string }> {
-  const parsed = acceptSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0].message }
+  try {
+    const parsed = acceptSchema.safeParse(data)
+    if (!parsed.success) return { error: parsed.error.issues[0].message }
 
-  const { token, full_name, email, password } = parsed.data
-  const admin = createAdminClient()
+    const { token, full_name, email, password } = parsed.data
+    const admin = createAdminClient()
 
-  // 1. Validar token (service_role para leer sin RLS)
-  const { data: invitation, error: invError } = await admin
-    .from('organization_invitations')
-    .select('*, organizations(name)')
-    .eq('token', token)
-    .gt('expires_at', new Date().toISOString())
-    .single()
+    // 1. Validar token (service_role para leer sin RLS)
+    const { data: invitation, error: invError } = await admin
+      .from('organization_invitations')
+      .select('*, organizations(name)')
+      .eq('token', token)
+      .gt('expires_at', new Date().toISOString())
+      .single()
 
-  if (invError || !invitation) {
-    return { error: 'El link de invitación no es válido o ya expiró.' }
-  }
-
-  if (invitation.max_uses > 0 && invitation.use_count >= invitation.max_uses) {
-    return { error: 'Este link de invitación ya fue utilizado.' }
-  }
-
-  // 2. Obtener o crear el usuario
-  let userId: string
-
-  const supabase = await createClient()
-  const { data: { user: currentUser } } = await supabase.auth.getUser()
-
-  if (currentUser) {
-    userId = currentUser.id
-  } else {
-    // Registro nuevo
-    if (!email || !password || !full_name) {
-      return { error: 'Se requiere nombre, email y contraseña para unirse.' }
+    if (invError || !invitation) {
+      return { error: 'El link de invitación no es válido o ya expiró.' }
     }
 
-    // Usar admin.createUser para bypasear confirmación de email
-    // (el link de invitación ya actúa como verificación)
-    const { data: createData, error: createError } = await admin.auth.admin.createUser({
-      email,
-      password,
-      user_metadata: { full_name },
-      email_confirm: true,
-    })
+    if (invitation.max_uses > 0 && invitation.use_count >= invitation.max_uses) {
+      return { error: 'Este link de invitación ya fue utilizado.' }
+    }
 
-    if (createError || !createData.user) {
-      const msg = createError?.message?.toLowerCase() ?? ''
-      if (msg.includes('already registered') || msg.includes('user already exists') || msg.includes('already been registered')) {
-        return { error: 'Ya existe una cuenta con ese email. Iniciá sesión primero.' }
+    // 2. Obtener o crear el usuario
+    let userId: string
+
+    const supabase = await createClient()
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+    if (currentUser) {
+      userId = currentUser.id
+    } else {
+      // Registro nuevo
+      if (!email || !password || !full_name) {
+        return { error: 'Se requiere nombre, email y contraseña para unirse.' }
       }
-      return { error: 'Error al crear la cuenta.' }
+
+      // Usar admin.createUser para bypasear confirmación de email
+      // (el link de invitación ya actúa como verificación)
+      const { data: createData, error: createError } = await admin.auth.admin.createUser({
+        email,
+        password,
+        user_metadata: { full_name },
+        email_confirm: true,
+      })
+
+      if (createError || !createData.user) {
+        const msg = createError?.message?.toLowerCase() ?? ''
+        if (msg.includes('already registered') || msg.includes('user already exists') || msg.includes('already been registered')) {
+          return { error: 'Ya existe una cuenta con ese email. Iniciá sesión primero.' }
+        }
+        return { error: 'Error al crear la cuenta.' }
+      }
+
+      userId = createData.user.id
+
+      // Auto-login para que el redirect a /dashboard funcione
+      await supabase.auth.signInWithPassword({ email, password })
     }
 
-    userId = createData.user.id
+    // 3. Agregar como miembro (service_role, sin RLS)
+    const { error: memberError } = await admin
+      .from('organization_members')
+      .insert({
+        organization_id: invitation.organization_id,
+        user_id:         userId,
+        role:            invitation.role,
+        invited_by:      invitation.invited_by,
+      })
 
-    // Auto-login para que el redirect a /dashboard funcione
-    await supabase.auth.signInWithPassword({ email, password })
-  }
-
-  // 3. Agregar como miembro (service_role, sin RLS)
-  const { error: memberError } = await admin
-    .from('organization_members')
-    .insert({
-      organization_id: invitation.organization_id,
-      user_id:         userId,
-      role:            invitation.role,
-      invited_by:      invitation.invited_by,
-    })
-
-  if (memberError) {
-    if (memberError.code === '23505') {
-      return { error: 'Ya sos miembro de esta organización.' }
+    if (memberError) {
+      if (memberError.code === '23505') {
+        return { error: 'Ya sos miembro de esta organización.' }
+      }
+      return { error: 'Error al unirte a la organización.' }
     }
-    return { error: 'Error al unirte a la organización.' }
+
+    // 4. Marcar invitación como usada
+    await admin
+      .from('organization_invitations')
+      .update({
+        used_by:   userId,
+        used_at:   new Date().toISOString(),
+        use_count: invitation.use_count + 1,
+      })
+      .eq('id', invitation.id)
+
+    const orgName = (invitation.organizations as { name: string } | null)?.name ?? ''
+    return { success: true, orgName }
+  } catch {
+    return { error: 'Error inesperado al aceptar la invitación.' }
   }
-
-  // 4. Marcar invitación como usada
-  await admin
-    .from('organization_invitations')
-    .update({
-      used_by:   userId,
-      used_at:   new Date().toISOString(),
-      use_count: invitation.use_count + 1,
-    })
-    .eq('id', invitation.id)
-
-  const orgName = (invitation.organizations as { name: string } | null)?.name ?? ''
-  return { success: true, orgName }
 }

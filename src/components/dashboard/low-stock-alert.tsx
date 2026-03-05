@@ -39,10 +39,12 @@ export function LowStockAlert({ products }: LowStockAlertProps) {
       ) : (
         <ul className="space-y-3" role="list">
           {products.map((product) => {
-            const percentage = Math.min(
-              Math.round((product.current_stock / product.min_stock) * 100),
-              100
-            )
+            const percentage = product.min_stock === 0
+              ? 100
+              : Math.min(
+                  Math.round((product.current_stock / product.min_stock) * 100),
+                  100
+                )
             const barColor =
               percentage < 50
                 ? 'bg-red-500'

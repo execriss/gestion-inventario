@@ -36,14 +36,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
-
-interface UserInfo {
-  email: string
-  fullName: string
-  avatarUrl: string | null
-  role: string
-}
+import { cn, getInitials } from '@/lib/utils'
+import { type UserInfo } from '@/components/layout/sidebar'
 
 interface HeaderProps {
   user: UserInfo
@@ -90,15 +84,6 @@ function getBreadcrumbs(pathname: string): { label: string; href: string }[] {
   }
 
   return crumbs
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
 }
 
 export function Header({ user, lowStockCount }: HeaderProps) {

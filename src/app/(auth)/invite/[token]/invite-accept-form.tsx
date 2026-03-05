@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils'
 
 const inviteRegisterSchema = z.object({
   full_name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
-  email: z.string().email('Email invalido'),
+  email: z.email('Email invalido'),
   password: z.string().min(8, 'Minimo 8 caracteres'),
 })
 

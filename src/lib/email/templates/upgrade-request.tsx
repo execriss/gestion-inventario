@@ -124,7 +124,6 @@ export function UpgradeRequestEmail({
   )
 }
 
-export default UpgradeRequestEmail
 
 // -- Styles ------------------------------------------------------------------
 

@@ -1,14 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
-function escapeCsvValue(value: string | number | null | undefined): string {
-  if (value === null || value === undefined) return ''
-  const str = String(value)
-  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-    return `"${str.replace(/"/g, '""')}"`
-  }
-  return str
-}
+import { escapeCsvValue, formatNumberFixed } from '@/lib/utils'
 
 function formatDate(iso: string): string {
   const d = new Date(iso)
@@ -19,11 +11,6 @@ function formatDate(iso: string): string {
     hour: '2-digit',
     minute: '2-digit',
   })
-}
-
-function formatNumber(n: number | null | undefined): string {
-  if (n === null || n === undefined) return '0.00'
-  return n.toFixed(2)
 }
 
 export async function GET(request: NextRequest) {
@@ -95,8 +82,8 @@ export async function GET(request: NextRequest) {
       escapeCsvValue(products?.name),
       escapeCsvValue(products?.sku),
       escapeCsvValue(m.quantity as number),
-      escapeCsvValue(formatNumber(m.unit_price as number)),
-      escapeCsvValue(formatNumber(m.total_price as number)),
+      escapeCsvValue(formatNumberFixed(m.unit_price as number)),
+      escapeCsvValue(formatNumberFixed(m.total_price as number)),
       escapeCsvValue(suppliers?.name),
       escapeCsvValue(m.reference as string | null),
       escapeCsvValue(profiles?.full_name),

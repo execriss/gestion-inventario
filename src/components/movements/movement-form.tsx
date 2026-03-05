@@ -64,8 +64,7 @@ interface MovementFormProps {
   suppliers?: { id: string; name: string }[]
 }
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(value)
+import { formatCurrencyDecimals as formatCurrency } from '@/lib/utils'
 
 export function MovementForm({ type, products, suppliers = [] }: MovementFormProps) {
   const router = useRouter()

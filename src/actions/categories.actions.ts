@@ -4,8 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { requireOrgRole } from '@/lib/supabase/org'
 import { categorySchema } from '@/lib/validations/category.schema'
-
-type ActionResult = { success: true } | { error: string }
+import { type ActionResult } from '@/lib/utils'
 
 export async function createCategory(data: unknown): Promise<ActionResult> {
   try {
@@ -61,6 +60,7 @@ export async function updateCategory(
         icon:  parsed.data.icon,
       })
       .eq('id', id)
+      .eq('organization_id', auth.orgId)
 
     if (error) {
       if (error.code === '23505') {
@@ -86,6 +86,7 @@ export async function deleteCategory(id: string): Promise<ActionResult> {
       .from('categories')
       .delete()
       .eq('id', id)
+      .eq('organization_id', auth.orgId)
 
     if (error) {
       if (error.code === '23503') {

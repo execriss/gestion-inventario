@@ -23,7 +23,7 @@ import {
 
 const orgSchema = z.object({
   name: z.string().min(2, 'Minimo 2 caracteres').max(100),
-  logo_url: z.string().url('URL invalida').or(z.literal('')).optional(),
+  logo_url: z.url('URL invalida').or(z.literal('')).optional(),
   email_alerts_enabled: z.boolean(),
 })
 

@@ -26,9 +26,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn, getInitials } from '@/lib/utils'
 
-interface UserInfo {
+export interface UserInfo {
   email: string
   fullName: string
   avatarUrl: string | null
@@ -98,15 +98,6 @@ const NAV_ITEMS = [
     icon: Settings,
   },
 ] as const
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
 
 function SidebarNav({ onNavigate, lowStockCount = 0 }: { onNavigate?: () => void; lowStockCount?: number }) {
   const pathname = usePathname()

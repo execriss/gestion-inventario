@@ -2,12 +2,10 @@
 
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
-import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { requireOrgRole } from '@/lib/supabase/org'
 import { type UserRole } from '@/types/database.types'
-
-type ActionResult = { success: true } | { error: string }
+import { type ActionResult } from '@/lib/utils'
 
 const createInvSchema = z.object({
   role:     z.enum(['admin', 'operator', 'viewer']),
@@ -62,11 +60,9 @@ export async function createInvitation(data: unknown): Promise<
 
     if (error || !inv) return { error: 'Error al crear la invitación' }
 
-    // Construir URL absoluta usando el header host
-    const headersList = await headers()
-    const host   = headersList.get('host') ?? 'localhost:3000'
-    const proto  = host.startsWith('localhost') ? 'http' : 'https'
-    const url    = `${proto}://${host}/invite/${inv.token}`
+    // Construir URL absoluta
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `http://localhost:3000`
+    const url    = `${baseUrl}/invite/${inv.token}`
 
     revalidatePath('/settings/members')
     return { success: true, url, token: inv.token }

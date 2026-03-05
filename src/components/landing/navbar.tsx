@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Box, Menu, X } from 'lucide-react'
+import { Box, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,

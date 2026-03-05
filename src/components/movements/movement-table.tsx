@@ -30,8 +30,7 @@ interface MovementTableProps {
   }>
 }
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(value)
+import { formatCurrencyDecimals as formatCurrency } from '@/lib/utils'
 
 export function MovementTable({ movements }: MovementTableProps) {
   if (movements.length === 0) {

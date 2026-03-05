@@ -6,8 +6,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { requireOrgRole } from '@/lib/supabase/org'
 import { movementSchema } from '@/lib/validations/movement.schema'
 import { sendStockAlert } from '@/lib/email/resend'
-
-type ActionResult = { success: true } | { error: string }
+import { type ActionResult } from '@/lib/utils'
 
 export async function createMovement(data: unknown): Promise<ActionResult> {
   try {

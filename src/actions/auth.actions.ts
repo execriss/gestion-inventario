@@ -123,11 +123,15 @@ export async function registerAction(
           return { error: 'Error al crear la organización.' }
         }
 
-        await admin.from('organization_members').insert({
+        const { error: memberError2 } = await admin.from('organization_members').insert({
           organization_id: org2.id,
           user_id:         userId,
           role:            'admin',
         })
+
+        if (memberError2) {
+          return { error: 'Error al configurar los permisos.' }
+        }
       } else {
         return { error: 'Error al crear la organización.' }
       }

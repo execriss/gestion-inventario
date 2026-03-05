@@ -4,8 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { requireOrgRole } from '@/lib/supabase/org'
 import { supplierSchema } from '@/lib/validations/supplier.schema'
-
-type ActionResult = { success: true } | { error: string }
+import { type ActionResult } from '@/lib/utils'
 
 export async function createSupplier(data: unknown): Promise<ActionResult> {
   try {
@@ -64,6 +63,7 @@ export async function updateSupplier(
         notes:   parsed.data.notes   || null,
       })
       .eq('id', id)
+      .eq('organization_id', auth.orgId)
 
     if (error) {
       return { error: 'Error al actualizar el proveedor' }
@@ -86,6 +86,7 @@ export async function deleteSupplier(id: string): Promise<ActionResult> {
       .from('suppliers')
       .update({ is_active: false })
       .eq('id', id)
+      .eq('organization_id', auth.orgId)
 
     if (error) {
       return { error: 'Error al eliminar el proveedor' }

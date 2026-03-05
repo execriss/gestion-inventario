@@ -464,7 +464,7 @@ export default function LandingPage() {
         {/* Copyright */}
         <div className="mx-auto mt-8 max-w-6xl border-t border-white/[0.04] pt-6 text-center">
           <p className="text-xs text-muted-foreground">
-            &copy; 2025 Inventario Pro. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} Inventario Pro. Todos los derechos reservados.
           </p>
         </div>
       </footer>

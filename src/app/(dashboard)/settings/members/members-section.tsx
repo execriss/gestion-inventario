@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
+import { cn, getInitials } from '@/lib/utils'
 
 const ROLE_LABELS: Record<string, string> = {
   admin: 'Admin',
@@ -27,15 +27,6 @@ const ROLE_COLORS: Record<string, string> = {
   admin: 'bg-neon-cyan/15 text-neon-cyan border-neon-cyan/30',
   operator: 'bg-neon-violet/15 text-neon-violet border-neon-violet/30',
   viewer: 'bg-muted text-muted-foreground border-border',
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
 }
 
 interface Member {

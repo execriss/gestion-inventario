@@ -102,7 +102,6 @@ export function StockAlertEmail({
   )
 }
 
-export default StockAlertEmail
 
 // ── Styles ────────────────────────────────────────────────────────
 

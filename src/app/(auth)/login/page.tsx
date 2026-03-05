@@ -19,7 +19,7 @@ import {
 import { cn } from '@/lib/utils'
 
 const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
+  email: z.email('Email inválido'),
   password: z.string().min(6, 'Mínimo 6 caracteres'),
 })
 
