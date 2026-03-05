@@ -59,7 +59,7 @@ export function MovementTable({ movements }: MovementTableProps) {
               <TableHead>Producto</TableHead>
               <TableHead className="text-right">Cantidad</TableHead>
               <TableHead className="hidden md:table-cell text-right">Precio Unit.</TableHead>
-              <TableHead className="text-right">Total</TableHead>
+              <TableHead className="hidden sm:table-cell text-right">Total</TableHead>
               <TableHead className="hidden lg:table-cell">Proveedor</TableHead>
               <TableHead className="hidden lg:table-cell">Referencia</TableHead>
               <TableHead className="hidden md:table-cell">Usuario</TableHead>
@@ -107,7 +107,7 @@ export function MovementTable({ movements }: MovementTableProps) {
                   {formatCurrency(movement.unit_price)}
                 </TableCell>
 
-                <TableCell className="text-right font-medium tabular-nums">
+                <TableCell className="hidden sm:table-cell text-right font-medium tabular-nums">
                   {formatCurrency(movement.total_price)}
                 </TableCell>
 

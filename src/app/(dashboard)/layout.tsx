@@ -1,5 +1,4 @@
 import { redirect } from 'next/navigation'
-import { Suspense } from 'react'
 import { Sidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
 import { DEMO_MODE, DEMO_USER, DEMO_LOW_STOCK } from '@/lib/demo'
@@ -28,9 +27,9 @@ export default async function DashboardLayout({
   // MODO DEMO: usar usuario y datos ficticios
   if (DEMO_MODE) {
     return (
-      <div className="flex min-h-svh">
+      <div className="flex min-h-svh overflow-x-hidden">
         <Sidebar user={DEMO_USER} lowStockCount={DEMO_LOW_STOCK.length} />
-        <div className="flex flex-1 flex-col lg:pl-64">
+        <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
           <Header user={DEMO_USER} lowStockCount={DEMO_LOW_STOCK.length} />
           <main className="flex-1 p-4 lg:p-6">{children}</main>
         </div>
@@ -56,9 +55,9 @@ export default async function DashboardLayout({
   const { userInfo, lowStockCount } = layoutData
 
   return (
-    <div className="flex min-h-svh">
+    <div className="flex min-h-svh overflow-x-hidden">
       <Sidebar user={userInfo} lowStockCount={lowStockCount} />
-      <div className="flex flex-1 flex-col lg:pl-64">
+      <div className="flex min-w-0 flex-1 flex-col lg:pl-64">
         <Header user={userInfo} lowStockCount={lowStockCount} />
         <main className="flex-1 p-4 lg:p-6">{children}</main>
       </div>

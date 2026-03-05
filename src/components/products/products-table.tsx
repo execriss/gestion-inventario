@@ -119,9 +119,9 @@ export function ProductsTable({ products, categories }: ProductsTableProps) {
                   <TableCell className="hidden sm:table-cell font-mono text-xs text-muted-foreground">
                     {product.sku ?? '—'}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="max-w-[140px] sm:max-w-none">
                     <div className="flex flex-col gap-1">
-                      <span className="font-medium">{product.name}</span>
+                      <span className="font-medium truncate">{product.name}</span>
                       <Badge
                         variant="outline"
                         className="w-fit text-xs"

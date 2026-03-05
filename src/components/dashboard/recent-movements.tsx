@@ -64,7 +64,7 @@ export function RecentMovements({ movements }: RecentMovementsProps) {
             <TableBody>
               {movements.map((movement) => (
                 <TableRow key={movement.id}>
-                  <TableCell className="whitespace-nowrap text-muted-foreground text-xs">
+                  <TableCell className="text-muted-foreground text-xs w-[80px]">
                     {formatDistanceToNow(new Date(movement.created_at), {
                       addSuffix: true,
                       locale: es,
@@ -83,13 +83,13 @@ export function RecentMovements({ movements }: RecentMovementsProps) {
                       </Badge>
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="max-w-[130px] sm:max-w-none">
                     <div>
-                      <p className="text-sm font-medium">
+                      <p className="text-sm font-medium truncate">
                         {movement.products?.name ?? 'Producto eliminado'}
                       </p>
                       {movement.products?.sku && (
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground hidden sm:block">
                           {movement.products.sku}
                         </p>
                       )}

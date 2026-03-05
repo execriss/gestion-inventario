@@ -62,8 +62,8 @@ export function SupplierTable({ suppliers }: SupplierTableProps) {
           <TableBody>
             {suppliers.map((supplier) => (
               <TableRow key={supplier.id} className="hover:bg-muted/30">
-                <TableCell className="font-medium">{supplier.name}</TableCell>
-                <TableCell className="text-muted-foreground">
+                <TableCell className="max-w-[140px] sm:max-w-none font-medium truncate">{supplier.name}</TableCell>
+                <TableCell className="max-w-[120px] sm:max-w-none text-muted-foreground truncate">
                   {supplier.contact || '—'}
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-muted-foreground">
