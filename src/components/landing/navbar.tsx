@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { label: 'Características', href: '#caracteristicas' },
   { label: 'Cómo funciona', href: '#como-funciona' },
   { label: 'Precios', href: '#precios' },
+  { label: 'Ayuda', href: '/ayuda' },
 ] as const
 
 export function LandingNavbar() {
@@ -51,15 +52,25 @@ export function LandingNavbar() {
 
         {/* Desktop links */}
         <div className="hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="rounded-md px-3.5 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {link.label}
-            </a>
-          ))}
+          {NAV_LINKS.map((link) =>
+            link.href.startsWith('#') ? (
+              <a
+                key={link.href}
+                href={link.href}
+                className="rounded-md px-3.5 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-md px-3.5 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {link.label}
+              </Link>
+            )
+          )}
         </div>
 
         {/* Desktop actions */}
@@ -103,12 +114,21 @@ export function LandingNavbar() {
               <div className="flex flex-col gap-1">
                 {NAV_LINKS.map((link) => (
                   <SheetClose key={link.href} asChild>
-                    <a
-                      href={link.href}
-                      className="rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-white/[0.04] hover:text-foreground"
-                    >
-                      {link.label}
-                    </a>
+                    {link.href.startsWith('#') ? (
+                      <a
+                        href={link.href}
+                        className="rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-white/[0.04] hover:text-foreground"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-white/[0.04] hover:text-foreground"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </SheetClose>
                 ))}
               </div>

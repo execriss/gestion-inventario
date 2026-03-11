@@ -447,6 +447,12 @@ export default function LandingPage() {
               Precios
             </a>
             <Link
+              href="/ayuda"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Ayuda
+            </Link>
+            <Link
               href="/login"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
