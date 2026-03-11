@@ -17,13 +17,7 @@ import {
   DEMO_TODAY_SUMMARY,
   DEMO_RECENT_MOVEMENTS,
 } from '@/lib/demo'
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: 'ARS',
-    maximumFractionDigits: 0,
-  }).format(value)
+import { formatCurrency } from '@/lib/utils'
 
 export default async function DashboardPage() {
   // ---- MODO DEMO ----

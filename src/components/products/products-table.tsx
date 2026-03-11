@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 
 import type { Category, ProductWithRelations } from '@/types/database.types'
 import { deleteProduct } from '@/actions/products.actions'
+import { formatCurrency } from '@/lib/utils'
 import {
   Table,
   TableHeader,
@@ -151,9 +152,7 @@ export function ProductsTable({ products, categories }: ProductsTableProps) {
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-right tabular-nums">
                     {product.cost_price != null
-                      ? `$${product.cost_price.toLocaleString('es-AR', {
-                          minimumFractionDigits: 2,
-                        })}`
+                      ? formatCurrency(product.cost_price)
                       : '—'}
                   </TableCell>
                   <TableCell>
