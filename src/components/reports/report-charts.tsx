@@ -48,6 +48,7 @@ export function StockByCategoryChart({
     color: string
     total_stock: number
     total_value: number
+    product_count: number
   }>
 }) {
   return <StockByCategoryChartComponent data={data} />

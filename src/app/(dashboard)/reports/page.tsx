@@ -28,7 +28,6 @@ export default async function ReportsPage() {
     topProducts = DEMO_PRODUCTS
       .slice()
       .sort((a, b) => b.current_stock - a.current_stock)
-      .slice(0, 10)
       .map(p => ({ name: p.name, current_stock: p.current_stock, cost_price: p.cost_price }))
   } else {
     const supabase = await createClient()
@@ -48,8 +47,7 @@ export default async function ReportsPage() {
           .from('products')
           .select('name, current_stock, cost_price')
           .eq('is_active', true)
-          .order('current_stock', { ascending: false })
-          .limit(10),
+          .order('current_stock', { ascending: false }),
       ])
 
     movements = (movementsResult.data ?? []) as MovementRow[]
@@ -118,10 +116,10 @@ export default async function ReportsPage() {
           <div className="glass-card rounded-xl p-6">
             <div className="mb-4">
               <h2 className="text-base font-semibold">
-                Top 10 Productos por Stock
+                Todos los Productos por Stock
               </h2>
               <p className="text-sm text-muted-foreground">
-                Productos con mayor cantidad de unidades en inventario
+                Comparación y análisis de todos los productos en inventario
               </p>
             </div>
             <TopProductsChart data={topProducts} />
