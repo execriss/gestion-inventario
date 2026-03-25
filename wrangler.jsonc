@@ -11,5 +11,11 @@
   "observability": {
     "enabled": true
   },
-  "workers_dev": false
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "inventario.exegestion.com",
+      "custom_domain": true
+    }
+  ]
 }

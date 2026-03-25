@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireOrgRole } from '@/lib/supabase/org'
 import { movementSchema } from '@/lib/validations/movement.schema'
+import { getEffectivePlan } from '@/lib/plans'
 import { sendStockAlert } from '@/lib/email/resend'
 import { type ActionResult } from '@/lib/utils'
 
@@ -80,14 +81,20 @@ async function checkAndSendStockAlert(
   if (!product) return
   if (product.current_stock >= product.min_stock) return
 
-  // 2. Verificar si la org tiene alertas habilitadas
+  // 2. Verificar si la org tiene plan Pro y alertas habilitadas
   const { data: org } = await supabase
     .from('organizations')
-    .select('name, email_alerts_enabled')
+    .select('name, plan, plan_expires_at, email_alerts_enabled')
     .eq('id', orgId)
     .single()
 
-  if (!org || !org.email_alerts_enabled) return
+  if (!org) return
+
+  // Solo Plan Pro puede recibir alertas por email
+  const effectivePlan = getEffectivePlan(org.plan, org.plan_expires_at)
+  if (effectivePlan !== 'pro') return
+
+  if (!org.email_alerts_enabled) return
 
   // 3. Obtener los user_ids de los admins de la org
   const { data: admins } = await supabase

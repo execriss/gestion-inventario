@@ -45,6 +45,7 @@ export interface Database {
           slug:                 string
           logo_url:             string | null
           plan:                 OrgPlan
+          plan_expires_at:      string | null
           is_active:            boolean
           email_alerts_enabled: boolean
           created_at:           string
@@ -56,6 +57,7 @@ export interface Database {
           slug:                  string
           logo_url?:             string | null
           plan?:                 OrgPlan
+          plan_expires_at?:      string | null
           is_active?:            boolean
           email_alerts_enabled?: boolean
           created_at?:           string
@@ -66,6 +68,7 @@ export interface Database {
           slug?:                 string
           logo_url?:             string | null
           plan?:                 OrgPlan
+          plan_expires_at?:      string | null
           is_active?:            boolean
           email_alerts_enabled?: boolean
           updated_at?:           string

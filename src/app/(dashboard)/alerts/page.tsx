@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { AlertTriangle, CheckCircle2, Pencil } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Info, Pencil, ShieldAlert } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -31,45 +31,78 @@ export default async function AlertsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Alertas de Stock
-        </h1>
-        <p className="text-muted-foreground">
-          Productos que necesitan reposición urgente
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="bg-cyan-400/10 border border-cyan-400/20 rounded-lg p-2">
+            <ShieldAlert className="size-5 text-cyan-400" aria-hidden="true" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">
+              Alertas de stock
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Monitoreo en tiempo real de productos que necesitan reposición
+            </p>
+          </div>
+        </div>
+
+        {hasAlerts && (
+          <div className="flex items-center gap-2">
+            {hasCritical && (
+              <Badge className="bg-destructive/15 text-destructive border border-destructive/30 text-xs hover:bg-destructive/25">
+                {critical.length} {critical.length === 1 ? 'crítico' : 'críticos'}
+              </Badge>
+            )}
+            {hasLow && (
+              <Badge className="bg-amber-500/15 text-amber-400 border border-amber-400/30 text-xs hover:bg-amber-500/25">
+                {low.length} con stock bajo
+              </Badge>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Banner informativo */}
+      <div className="glass-card rounded-xl p-4 flex items-start gap-3 border border-cyan-400/10">
+        <Info className="size-4 text-cyan-400 mt-0.5 shrink-0" aria-hidden="true" />
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Las alertas se generan automáticamente cuando el stock actual de un producto
+          cae por debajo del <span className="text-foreground font-medium">mínimo configurado</span>.
+          Editá el producto para ajustar el stock o modificar el umbral.
         </p>
       </div>
 
       {!hasAlerts ? (
         <div className="glass-card rounded-xl p-12">
           <div className="flex flex-col items-center justify-center text-center">
-            <CheckCircle2
-              className="size-12 text-emerald-400 mb-4"
-              aria-hidden="true"
-            />
-            <p className="text-lg font-semibold text-emerald-400">
+            <div className="bg-emerald-400/10 rounded-full p-3 mb-5">
+              <CheckCircle2
+                className="size-8 text-emerald-400"
+                aria-hidden="true"
+              />
+            </div>
+            <p className="text-lg font-semibold text-cyan-400">
               Todo el stock está al día
             </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Ningún producto por debajo del mínimo configurado
+            <p className="text-sm text-muted-foreground mt-1.5 max-w-md">
+              Ningún producto se encuentra por debajo del mínimo configurado.
+              Seguí monitoreando para mantener tu inventario saludable.
             </p>
           </div>
         </div>
       ) : (
         <>
-          {/* Stock Critico */}
+          {/* Stock Crítico */}
           <section aria-labelledby="critical-heading">
             <div className="flex items-center gap-3 mb-4">
+              <div className="h-5 w-0.5 rounded-full bg-destructive" aria-hidden="true" />
               <h2
                 id="critical-heading"
                 className="text-lg font-semibold"
               >
-                Stock Crítico
+                Stock crítico
               </h2>
-              <Badge
-                variant="destructive"
-                className="text-xs"
-              >
+              <Badge variant="destructive" className="text-xs">
                 {critical.length}
               </Badge>
             </div>
@@ -96,11 +129,12 @@ export default async function AlertsPage() {
           {/* Stock Bajo */}
           <section aria-labelledby="low-heading">
             <div className="flex items-center gap-3 mb-4">
+              <div className="h-5 w-0.5 rounded-full bg-amber-500" aria-hidden="true" />
               <h2
                 id="low-heading"
                 className="text-lg font-semibold"
               >
-                Stock Bajo
+                Stock bajo
               </h2>
               <Badge className="bg-amber-500/15 text-amber-400 border border-amber-400/30 text-xs hover:bg-amber-500/25">
                 {low.length}
@@ -146,10 +180,10 @@ function AlertCard({
   return (
     <div
       className={cn(
-        'glass-card rounded-xl p-5 space-y-4 border',
+        'glass-card rounded-xl p-5 space-y-4 border border-l-2',
         isCritical
-          ? 'border-destructive/30'
-          : 'border-amber-400/30'
+          ? 'border-destructive/30 border-l-destructive'
+          : 'border-amber-400/30 border-l-amber-500'
       )}
     >
       {/* Producto info */}
@@ -192,7 +226,7 @@ function AlertCard({
         </div>
 
         <div className="flex items-baseline justify-between text-sm">
-          <span className="text-muted-foreground">Stock minimo</span>
+          <span className="text-muted-foreground">Stock mínimo</span>
           <span className="font-medium tabular-nums text-foreground">
             {product.min_stock} {product.unit_abbreviation}
           </span>
@@ -226,7 +260,7 @@ function AlertCard({
           >
             {product.stock_deficit} {product.unit_abbreviation}
           </span>{' '}
-          para alcanzar el minimo
+          para alcanzar el mínimo
         </p>
       </div>
 

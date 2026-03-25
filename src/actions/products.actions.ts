@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { requireOrgRole } from '@/lib/supabase/org'
 import { productSchema } from '@/lib/validations/product.schema'
+import { getEffectivePlan, PLAN_LIMITS } from '@/lib/plans'
 import { type ActionResult } from '@/lib/utils'
 
 function generateSku(): string {
@@ -26,16 +27,22 @@ export async function createProduct(data: unknown): Promise<ActionResult> {
       return { error: parsed.error.issues[0].message }
     }
 
-    // Verificar límite del plan Free (100 productos activos)
+    // Verificar límite de productos según plan
     const [orgResult, productCount] = await Promise.all([
-      supabase.from('organizations').select('plan').eq('id', auth.orgId).single(),
+      supabase.from('organizations').select('plan, plan_expires_at').eq('id', auth.orgId).single(),
       supabase.from('products').select('id', { count: 'exact', head: true })
         .eq('organization_id', auth.orgId).eq('is_active', true),
     ])
 
-    if (orgResult.data?.plan === 'free' && (productCount.count ?? 0) >= 100) {
+    const effectivePlan = getEffectivePlan(
+      orgResult.data?.plan ?? 'free',
+      orgResult.data?.plan_expires_at,
+    )
+    const maxProducts = PLAN_LIMITS[effectivePlan].maxProducts
+
+    if ((productCount.count ?? 0) >= maxProducts) {
       return {
-        error: 'Límite del plan Free: máximo 100 productos activos. Actualizá a Pro desde Configuración → Plan & Upgrade.',
+        error: `Límite del plan Free: máximo ${maxProducts} productos activos. Actualizá a Pro desde Configuración → Plan & Upgrade.`,
       }
     }
 

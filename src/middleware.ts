@@ -38,7 +38,8 @@ export async function middleware(request: NextRequest) {
   // Protect dashboard routes from unauthenticated users
   const isPublic = PUBLIC_ROUTES.some((route) => pathname === route) ||
     pathname.startsWith('/invite/') ||
-    pathname.startsWith('/api/health')
+    pathname.startsWith('/api/health') ||
+    pathname.startsWith('/api/webhooks/')
 
   if (!user && !isPublic && !pathname.startsWith('/_next')) {
     return NextResponse.redirect(new URL('/login', request.url))

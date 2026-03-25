@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { requireOrgRole } from '@/lib/supabase/org'
+import { getEffectivePlan, PLAN_LIMITS } from '@/lib/plans'
 import { type UserRole } from '@/types/database.types'
 import { type ActionResult } from '@/lib/utils'
 
@@ -33,16 +34,22 @@ export async function createInvitation(data: unknown): Promise<
     const parsed = createInvSchema.safeParse(data)
     if (!parsed.success) return { error: parsed.error.issues[0].message }
 
-    // Verificar límite del plan Free (3 miembros)
+    // Verificar límite de miembros según plan
     const [orgResult, memberCount] = await Promise.all([
-      supabase.from('organizations').select('plan').eq('id', auth.orgId).single(),
+      supabase.from('organizations').select('plan, plan_expires_at').eq('id', auth.orgId).single(),
       supabase.from('organization_members').select('id', { count: 'exact', head: true })
         .eq('organization_id', auth.orgId),
     ])
 
-    if (orgResult.data?.plan === 'free' && (memberCount.count ?? 0) >= 3) {
+    const effectivePlan = getEffectivePlan(
+      orgResult.data?.plan ?? 'free',
+      orgResult.data?.plan_expires_at,
+    )
+    const maxMembers = PLAN_LIMITS[effectivePlan].maxMembers
+
+    if ((memberCount.count ?? 0) >= maxMembers) {
       return {
-        error: 'Límite del plan Free: máximo 3 miembros. Actualizá a Pro desde Configuración → Plan & Upgrade.',
+        error: `Límite del plan Free: máximo ${maxMembers} miembros. Actualizá a Pro desde Configuración → Plan & Upgrade.`,
       }
     }
 
