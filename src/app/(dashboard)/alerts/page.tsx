@@ -18,7 +18,7 @@ export default async function AlertsPage() {
       .select('*')
       .order('current_stock')
 
-    allProducts = data ?? []
+    allProducts = (data ?? []) as LowStockProduct[]
   }
 
   const critical = allProducts.filter((p) => p.current_stock === 0)
@@ -202,7 +202,7 @@ function AlertCard({
           className="inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-medium"
           style={{
             backgroundColor: `${product.category_color}20`,
-            color: product.category_color,
+            color: product.category_color ?? undefined,
             borderColor: `${product.category_color}40`,
             borderWidth: '1px',
           }}

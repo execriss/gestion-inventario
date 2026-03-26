@@ -177,7 +177,7 @@ export async function getOrgMembers() {
 
   const { data, error } = await supabase
     .from('organization_members')
-    .select('*, profiles(full_name, avatar_url)')
+    .select('*, profiles!organization_members_user_id_fkey(full_name, avatar_url)')
     .eq('organization_id', auth.orgId)
     .order('joined_at', { ascending: true })
 

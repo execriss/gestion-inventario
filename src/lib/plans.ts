@@ -31,18 +31,19 @@ export type PlanFeature = keyof typeof PLAN_LIMITS.free
  * Si el plan Pro expiró, retorna 'free'.
  */
 export function getEffectivePlan(
-  plan: OrgPlan,
+  plan: string | null | undefined,
   planExpiresAt: string | null | undefined,
 ): OrgPlan {
-  if (plan === 'pro' && planExpiresAt && new Date() > new Date(planExpiresAt)) {
+  const p = (plan ?? 'free') as OrgPlan
+  if (p === 'pro' && planExpiresAt && new Date() > new Date(planExpiresAt)) {
     return 'free'
   }
-  return plan
+  return p
 }
 
 /** Retorna true si el plan tiene acceso a la feature dada. */
 export function canUseFeature(
-  plan: OrgPlan,
+  plan: string | null | undefined,
   planExpiresAt: string | null | undefined,
   feature: PlanFeature,
 ): boolean {
@@ -52,7 +53,7 @@ export function canUseFeature(
 
 /** Retorna los límites del plan efectivo. */
 export function getPlanLimits(
-  plan: OrgPlan,
+  plan: string | null | undefined,
   planExpiresAt: string | null | undefined,
 ) {
   const effective = getEffectivePlan(plan, planExpiresAt)

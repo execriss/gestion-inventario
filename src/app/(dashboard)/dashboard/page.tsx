@@ -76,8 +76,9 @@ export default async function DashboardPage() {
       >(),
   ])
 
-  const ingresosHoy = todaySummary?.find((s) => s.type === 'ingreso')
-  const egresosHoy = todaySummary?.find((s) => s.type === 'egreso')
+  type TodaySummaryRow = { total_movements: number; total_value: number }
+  const ingresosHoy = todaySummary?.find((s) => s.type === 'ingreso') as TodaySummaryRow | undefined
+  const egresosHoy  = todaySummary?.find((s) => s.type === 'egreso')  as TodaySummaryRow | undefined
   const alertCount = lowStockProducts?.length ?? 0
 
   return (
@@ -86,8 +87,8 @@ export default async function DashboardPage() {
       ingresosHoy={ingresosHoy}
       egresosHoy={egresosHoy}
       alertCount={alertCount}
-      stockByCategory={stockByCategory ?? []}
-      lowStockProducts={lowStockProducts ?? []}
+      stockByCategory={(stockByCategory ?? []) as Array<{ category_name: string; color: string; total_stock: number; product_count: number }>}
+      lowStockProducts={(lowStockProducts ?? []) as Array<{ id: string; name: string; sku: string | null; current_stock: number; min_stock: number; image_url: string | null; category_name: string; category_color: string; unit_abbreviation: string; stock_deficit: number }>}
       recentMovements={recentMovements ?? []}
     />
   )

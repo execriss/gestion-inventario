@@ -55,7 +55,7 @@ export async function createApiKey(label?: string): Promise<CreateApiKeyResult> 
       .eq('id', auth.orgId)
       .single()
 
-    const plan = getEffectivePlan(org?.plan ?? 'free', org?.plan_expires_at)
+    const plan = getEffectivePlan(org?.plan, org?.plan_expires_at)
     if (plan !== 'pro') {
       return { error: 'Las API keys requieren Plan Pro. Actualizá tu plan desde Configuración → Plan.' }
     }
