@@ -166,7 +166,14 @@ async function listProducts(url, orgId, supabase) {
 
   if (p.get('category_id')) q = q.eq('category_id', p.get('category_id'));
   if (p.get('search'))      q = q.ilike('name', `%${p.get('search')}%`);
-  if (p.get('low_stock') === 'true') q = q.filter('current_stock', 'lte', 'min_stock');
+  if (p.get('low_stock') === 'true') {
+    // PostgREST no soporta comparación columna-vs-columna; usamos la vista
+    const { data: ids } = await supabase
+      .from('low_stock_products')
+      .select('id')
+      .eq('organization_id', orgId);
+    q = q.in('id', (ids ?? []).map(r => r.id));
+  }
   if (p.get('sku'))         q = q.eq('sku', p.get('sku'));
 
   q = q.range(from, to);
@@ -536,9 +543,8 @@ async function summary(orgId, supabase) {
   ] = await Promise.all([
     supabase.from('products').select('*', { count: 'exact', head: true })
       .eq('organization_id', orgId).eq('is_active', true),
-    supabase.from('products').select('*', { count: 'exact', head: true })
-      .eq('organization_id', orgId).eq('is_active', true)
-      .filter('current_stock', 'lte', 'min_stock'),
+    supabase.from('low_stock_products').select('*', { count: 'exact', head: true })
+      .eq('organization_id', orgId),
     supabase.from('suppliers').select('*', { count: 'exact', head: true })
       .eq('organization_id', orgId).eq('is_active', true),
     supabase.from('categories').select('*', { count: 'exact', head: true })
@@ -561,12 +567,21 @@ async function summary(orgId, supabase) {
 async function summaryLowStock(url, orgId, supabase) {
   const { from, to, limit, page } = paginate(url);
 
+  // Obtener IDs de productos con stock bajo desde la vista
+  const { data: lowIds, error: viewErr } = await supabase
+    .from('low_stock_products')
+    .select('id')
+    .eq('organization_id', orgId);
+
+  if (viewErr) return err(viewErr.message, 500);
+
+  const ids = (lowIds ?? []).map(r => r.id);
+  if (ids.length === 0) return ok([], { total: 0, page, limit, pages: 0 });
+
   const { data, error, count } = await supabase
     .from('products')
-    .select('*, categories(id, name, color), units(id, name, abbreviation)', { count: 'exact' })
-    .eq('organization_id', orgId)
-    .eq('is_active', true)
-    .filter('current_stock', 'lte', 'min_stock')
+    .select('*, categories(id, name, color, icon), units(id, name, abbreviation)', { count: 'exact' })
+    .in('id', ids)
     .order('current_stock')
     .range(from, to);
 
