@@ -453,7 +453,7 @@ async function listMovements(url, orgId, supabase) {
   let q = supabase
     .from('inventory_movements')
     .select(
-      '*, products(id, name, sku), suppliers(id, name)',
+      '*, products(id, name, sku), suppliers(id, name), profiles(full_name)',
       { count: 'exact' }
     )
     .eq('organization_id', orgId)
@@ -475,7 +475,7 @@ async function listMovements(url, orgId, supabase) {
 async function getMovement(id, orgId, supabase) {
   const { data, error } = await supabase
     .from('inventory_movements')
-    .select('*, products(id, name, sku), suppliers(id, name)')
+    .select('*, products(id, name, sku), suppliers(id, name), profiles(full_name)')
     .eq('id', id)
     .eq('organization_id', orgId)
     .single();
@@ -506,7 +506,7 @@ async function createMovement(request, orgId, supabase) {
       reference:   reference   || null,
       notes:       notes       || null,
     })
-    .select('*, products(id, name, sku), suppliers(id, name)')
+    .select('*, products(id, name, sku), suppliers(id, name), profiles(full_name)')
     .single();
 
   if (error) {
@@ -642,6 +642,7 @@ function toMovement(r) {
     type:        r.type,
     product:     r.products    ?? null,
     supplier:    r.suppliers   ?? null,
+    created_by:  r.profiles?.full_name ?? null,
     quantity:    Number(r.quantity),
     unit_price:  Number(r.unit_price),
     total_price: Number(r.total_price),
