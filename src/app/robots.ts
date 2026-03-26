@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/dashboard/', '/settings/', '/api/'],
     },
-    sitemap: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}/sitemap.xml`,
+    sitemap: `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://inventario.exegestion.com'}/sitemap.xml`,
   }
 }

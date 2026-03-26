@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { UserCircle, Building2, Users, Crown } from 'lucide-react'
+import { UserCircle, Building2, Users, Crown, KeyRound } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const SETTINGS_NAV = [
@@ -10,6 +10,7 @@ const SETTINGS_NAV = [
   { label: 'Organizacion', href: '/settings/organization', icon: Building2 },
   { label: 'Equipo', href: '/settings/members', icon: Users },
   { label: 'Plan', href: '/settings/upgrade', icon: Crown },
+  { label: 'API', href: '/settings/api', icon: KeyRound },
 ]
 
 export default function SettingsLayout({

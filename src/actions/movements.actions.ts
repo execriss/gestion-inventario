@@ -137,6 +137,6 @@ async function checkAndSendStockAlert(
         unit,
       },
     ],
-    appUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001',
+    appUrl: process.env.NEXT_PUBLIC_APP_URL ?? 'https://inventario.exegestion.com',
   })
 }

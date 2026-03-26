@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { requireOrgRole } from '@/lib/supabase/org'
 import { createPreference, MP_PLAN_CONFIG, type PaidPlanId } from '@/lib/mercadopago'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://inventario.exegestion.com'
 
 const PAID_PLANS = new Set<PaidPlanId>(['pro'])
 

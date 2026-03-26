@@ -68,8 +68,9 @@ export async function createInvitation(data: unknown): Promise<
     if (error || !inv) return { error: 'Error al crear la invitación' }
 
     // Construir URL absoluta
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `http://localhost:3000`
-    const url    = `${baseUrl}/invite/${inv.token}`
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+    if (!baseUrl) throw new Error('NEXT_PUBLIC_APP_URL no configurada')
+    const url = `${baseUrl}/invite/${inv.token}`
 
     revalidatePath('/settings/members')
     return { success: true, url, token: inv.token }

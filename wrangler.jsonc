@@ -12,6 +12,15 @@
     "enabled": true
   },
   "workers_dev": false,
+  // Variables de entorno sin valor sensible
+  "vars": {
+    "NEXT_PUBLIC_DEMO_MODE": "false"
+  },
+  // Secrets configurados con: npx wrangler secret put NOMBRE
+  // NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  // NEXT_PUBLIC_MP_PUBLIC_KEY, SUPABASE_SERVICE_ROLE_KEY,
+  // MERCADOPAGO_ACCESS_TOKEN, MERCADOPAGO_WEBHOOK_SECRET,
+  // RESEND_API_KEY, ADMIN_EMAIL
   "routes": [
     {
       "pattern": "inventario.exegestion.com",
