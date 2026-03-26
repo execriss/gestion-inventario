@@ -23,8 +23,8 @@
   // RESEND_API_KEY, ADMIN_EMAIL
   "routes": [
     {
-      "pattern": "inventario.exegestion.com",
-      "custom_domain": true
+      "pattern": "inventario.exegestion.com/*",
+      "zone_name": "exegestion.com"
     }
   ]
 }

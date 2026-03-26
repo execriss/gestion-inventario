@@ -4,7 +4,7 @@ compatibility_date = "2026-03-25"
 compatibility_flags = ["nodejs_compat"]
 
 routes = [
-  { pattern = "inventario-api.exegestion.com", custom_domain = true }
+  { pattern = "inventario-api.exegestion.com/*", zone_name = "exegestion.com" }
 ]
 
 # Secrets — configurar con:
