@@ -10,6 +10,7 @@ type ProductOption = {
   id: string
   name: string
   sku: string | null
+  barcode: string | null
   current_stock: number
   units: { abbreviation: string } | null
   categories: { name: string; color: string } | null
@@ -23,6 +24,7 @@ export default async function EgresoPage() {
       id: p.id,
       name: p.name,
       sku: p.sku,
+      barcode: (p as { barcode?: string | null }).barcode ?? null,
       current_stock: p.current_stock,
       units: p.units ? { abbreviation: p.units.abbreviation } : null,
       categories: p.categories ? { name: p.categories.name, color: p.categories.color } : null,
@@ -31,7 +33,7 @@ export default async function EgresoPage() {
     const supabase = await createClient()
     const { data } = await supabase
       .from('products')
-      .select('id, name, sku, current_stock, units(abbreviation), categories(name, color)')
+      .select('id, name, sku, barcode, current_stock, units(abbreviation), categories(name, color)')
       .eq('is_active', true)
       .order('name')
     products = (data ?? []) as unknown as ProductOption[]

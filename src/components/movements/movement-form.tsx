@@ -10,8 +10,16 @@ import {
   Check,
   ChevronsUpDown,
   Loader2,
+  ScanLine,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import dynamic from 'next/dynamic'
+
+const BarcodeScanner = dynamic(
+  () =>
+    import('@/components/barcode/barcode-scanner').then((m) => m.BarcodeScanner),
+  { ssr: false }
+)
 
 import { movementSchema, type MovementFormData } from '@/lib/validations/movement.schema'
 import { createMovement } from '@/actions/movements.actions'
@@ -53,6 +61,7 @@ type ProductOption = {
   id: string
   name: string
   sku: string | null
+  barcode: string | null
   current_stock: number
   units: { abbreviation: string } | null
   categories: { name: string; color: string } | null
@@ -70,6 +79,7 @@ export function MovementForm({ type, products, suppliers = [] }: MovementFormPro
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [comboboxOpen, setComboboxOpen] = useState(false)
+  const [scannerOpen, setScannerOpen] = useState(false)
 
   const isIngreso = type === 'ingreso'
 
@@ -95,6 +105,20 @@ export function MovementForm({ type, products, suppliers = [] }: MovementFormPro
     typeof watchedQuantity === 'number' && typeof watchedUnitPrice === 'number'
       ? watchedQuantity * watchedUnitPrice
       : 0
+
+  function handleScanProduct(code: string) {
+    const normalized = code.trim()
+    if (!normalized) return
+    const match = products.find(
+      (p) => p.barcode === normalized || p.sku === normalized
+    )
+    if (match) {
+      form.setValue('product_id', match.id, { shouldValidate: true })
+      toast.success(`Producto encontrado: ${match.name}`)
+    } else {
+      toast.warning('No se encontró ningún producto con ese código')
+    }
+  }
 
   function onSubmit(data: MovementFormData) {
     // Client-side stock validation for egresos
@@ -151,6 +175,24 @@ export function MovementForm({ type, products, suppliers = [] }: MovementFormPro
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setScannerOpen(true)}
+            className="w-full justify-center gap-2 border-cyan-500/30 bg-cyan-500/5 text-cyan-200 hover:bg-cyan-500/15 hover:text-cyan-100 sm:w-auto"
+          >
+            <ScanLine className="size-4" aria-hidden />
+            Escanear producto
+          </Button>
+
+          <BarcodeScanner
+            open={scannerOpen}
+            onOpenChange={setScannerOpen}
+            onScan={handleScanProduct}
+            title="Escanear producto"
+            description="Buscaremos el producto por código de barras o SKU."
+          />
+
           {/* Producto — Combobox */}
           <FormField
             control={form.control}

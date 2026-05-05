@@ -52,6 +52,7 @@ export async function createProduct(data: unknown): Promise<ActionResult> {
       organization_id: auth.orgId,
       name:            parsed.data.name,
       sku,
+      barcode:         parsed.data.barcode || null,
       description:     parsed.data.description || null,
       category_id:     parsed.data.category_id,
       unit_id:         parsed.data.unit_id,
@@ -63,6 +64,7 @@ export async function createProduct(data: unknown): Promise<ActionResult> {
 
     if (error) {
       if (error.code === '23505') {
+        if (error.message.includes('barcode')) return { error: 'Ya existe un producto con ese código de barras' }
         return { error: 'Ya existe un producto con ese SKU' }
       }
       return { error: 'Error al crear el producto' }
@@ -95,6 +97,7 @@ export async function updateProduct(
       .update({
         name:        parsed.data.name,
         sku:         parsed.data.sku || null,
+        barcode:     parsed.data.barcode || null,
         description: parsed.data.description || null,
         category_id: parsed.data.category_id,
         unit_id:     parsed.data.unit_id,
@@ -107,6 +110,7 @@ export async function updateProduct(
 
     if (error) {
       if (error.code === '23505') {
+        if (error.message.includes('barcode')) return { error: 'Ya existe un producto con ese código de barras' }
         return { error: 'Ya existe un producto con ese SKU' }
       }
       return { error: 'Error al actualizar el producto' }
@@ -117,6 +121,26 @@ export async function updateProduct(
     return { success: true }
   } catch {
     return { error: 'Error inesperado al actualizar el producto' }
+  }
+}
+
+export async function getProductByBarcode(barcode: string) {
+  try {
+    const supabase = await createClient()
+    const auth = await requireOrgRole(supabase, 'operator')
+    if ('error' in auth) return null
+
+    const { data } = await supabase
+      .from('products')
+      .select('id, name, sku, barcode, current_stock, units(abbreviation), categories(name, color)')
+      .eq('organization_id', auth.orgId)
+      .eq('is_active', true)
+      .or(`barcode.eq.${barcode},sku.eq.${barcode}`)
+      .maybeSingle()
+
+    return data ?? null
+  } catch {
+    return null
   }
 }
 

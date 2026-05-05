@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { Barcode, Check, ChevronsUpDown } from 'lucide-react'
 import { toast } from 'sonner'
+import dynamic from 'next/dynamic'
 
 import type { Category, Product, Unit } from '@/types/database.types'
 import {
@@ -35,6 +36,12 @@ import {
   CommandList,
 } from '@/components/ui/command'
 
+const BarcodeScanner = dynamic(
+  () =>
+    import('@/components/barcode/barcode-scanner').then((m) => m.BarcodeScanner),
+  { ssr: false }
+)
+
 interface ProductFormProps {
   categories: Pick<Category, 'id' | 'name' | 'color'>[]
   units: Unit[]
@@ -46,6 +53,7 @@ export function ProductForm({ categories, units, product }: ProductFormProps) {
   const [loading, setLoading] = useState(false)
   const [categoryOpen, setCategoryOpen] = useState(false)
   const [unitOpen, setUnitOpen] = useState(false)
+  const [scannerOpen, setScannerOpen] = useState(false)
   const isEditing = !!product
 
   const form = useForm<ProductFormData>({
@@ -53,6 +61,7 @@ export function ProductForm({ categories, units, product }: ProductFormProps) {
     defaultValues: {
       name: product?.name ?? '',
       sku: product?.sku ?? '',
+      barcode: product?.barcode ?? '',
       description: product?.description ?? '',
       category_id: product?.category_id ?? '',
       unit_id: product?.unit_id ?? '',
@@ -117,23 +126,61 @@ export function ProductForm({ categories, units, product }: ProductFormProps) {
 
             <FormField
               control={form.control}
-              name="description"
+              name="barcode"
               render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel>Descripcion</FormLabel>
+                <FormItem>
+                  <FormLabel>Código de barras</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Descripcion opcional del producto..."
-                      rows={1}
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        placeholder="Escaneá o ingresá manualmente"
+                        className="pr-10 font-mono"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setScannerOpen(true)}
+                        aria-label="Escanear código de barras"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-cyan-500/15 hover:text-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/40"
+                      >
+                        <Barcode className="size-4" aria-hidden />
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
+
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Descripcion</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Descripcion opcional del producto..."
+                    rows={2}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
+
+        <BarcodeScanner
+          open={scannerOpen}
+          onOpenChange={setScannerOpen}
+          onScan={(code) =>
+            form.setValue('barcode', code, { shouldDirty: true, shouldValidate: true })
+          }
+          title="Escanear código de barras"
+          description="Apuntá la cámara al código de barras del producto."
+        />
 
         <div className="glass-card rounded-xl p-6 space-y-4">
           <h2 className="text-lg font-semibold">Clasificacion</h2>
