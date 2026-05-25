@@ -1,0 +1,24 @@
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    - cron: '0 23 * * 1'  # lunes 23:00 UTC = lunes 20:00 Argentina (UTC-3)
+  workflow_dispatch:        # permite disparar manualmente desde GitHub
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Playwright
+        run: |
+          npm install --no-save @playwright/test
+          npx playwright install chromium --with-deps
+
+      - name: Login y navegar a Productos
+        run: node scripts/keepalive.js
