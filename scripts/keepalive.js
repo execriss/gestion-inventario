@@ -9,9 +9,9 @@ const { chromium } = require('@playwright/test');
     await page.goto('https://inventario.exegestion.com/login', { waitUntil: 'networkidle' });
 
     console.log('[2/4] Completando credenciales...');
-    await page.getByLabel('Email').fill('exetest@gmail.com');
-    await page.getByLabel('Contraseña').fill('exe123123');
-    await page.getByRole('button', { name: /iniciar sesión/i }).click();
+    await page.locator('input[type="email"]').fill('exetest@gmail.com');
+    await page.locator('input[type="password"]').fill('exe123123');
+    await page.locator('button[type="submit"]').click();
 
     console.log('[3/4] Esperando redirección post-login...');
     await page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20000 });
