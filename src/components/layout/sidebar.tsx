@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useEffect, useTransition } from 'react'
+import { useTransition } from 'react'
 import {
   Box,
   LayoutDashboard,
@@ -104,13 +104,11 @@ function SidebarNav({ onNavigate, lowStockCount = 0 }: { onNavigate?: () => void
   const router = useRouter()
   const [isNavigating, startTransition] = useTransition()
 
-  // Pre-fetch todas las rutas al montar el sidebar para que la primera
-  // navegacion sea instantanea (tambien pre-compila en modo desarrollo)
-  useEffect(() => {
-    NAV_ITEMS.forEach(item => {
-      if ('href' in item) router.prefetch(item.href)
-    })
-  }, [router])
+  // Prefetch deshabilitado: en Cloudflare Workers cada RSC prefetch
+  // es una invocacion completa del Worker que consume CPU.
+  // 12 rutas x 2 instancias (desktop + mobile) = 24 requests extra
+  // solo al cargar, y se re-disparan en cada navegacion.
+  // Ver: Error 1102 — Worker exceeded CPU time limit.
 
   function handleNavClick(
     e: React.MouseEvent<HTMLAnchorElement>,
@@ -169,6 +167,7 @@ function SidebarNav({ onNavigate, lowStockCount = 0 }: { onNavigate?: () => void
           <Link
             key={item.href}
             href={item.href}
+            prefetch={false}
             onClick={(e) => handleNavClick(e, item.href)}
             className={cn(
               'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
