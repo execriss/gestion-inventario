@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && wrangler deploy"
+    "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true});require('fs').rmSync('.open-next',{recursive:true,force:true});require('fs').rmSync('.wrangler',{recursive:true,force:true})\"",
+    "preview": "npm run clean && opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "npm run clean && opennextjs-cloudflare build && wrangler deploy"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
