@@ -44,3 +44,6 @@ next-env.d.ts
 # cloudflare / opennext
 .open-next
 .wrangler
+
+# playwright mcp
+.playwright-mcp
